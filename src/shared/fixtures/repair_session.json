@@ -1,0 +1,47 @@
+{
+  "vehicleInfo": {
+    "make": "Subaru",
+    "model": "Outback",
+    "year": "2024",
+    "vin": "4T1BF1FK5KU123456",
+    "mileage": "45,230",
+    "licensePlate": "VA-ABC123"
+  },
+  "repairInfo": {
+    "date": "2025-08-26",
+    "type": "Oil Change & Tie Rod End Replacement (Left)",
+    "description": "Full synthetic oil change with new filter and replacement of left front tie rod end due to impact damage, along with a four-wheel alignment.",
+    "laborHours": 2.5,
+    "cost": 346.57,
+    "warranty": "6 months / 6,000 miles on oil change",
+    "technician": "Mike Johnson (ASE Certified)"
+  },
+  "partsUsed": [
+    {
+      "partName": "Mobil 1 Full Synthetic Oil",
+      "partNumber": "MOB1-5W30",
+      "quantity": 5,
+      "cost": 45.0,
+      "warranty": "6 months"
+    },
+    {
+      "partName": "OEM Oil Filter",
+      "partNumber": "TOY-90915-YZZD3",
+      "quantity": 1,
+      "cost": 15.0,
+      "warranty": "6 months"
+    },
+    {
+      "partName": "Tie Rod End, Front Left",
+      "partNumber": "SUB-34161AJ010",
+      "quantity": 1,
+      "cost": 75.0,
+      "warranty": "12 months/12,000 miles"
+    }
+  ],
+  "timestamps": {
+    "started": "2025-08-26T09:30:00Z",
+    "completed": "2025-08-26T12:00:00Z",
+    "inspected": "2025-08-26T12:15:00Z"
+  }
+}

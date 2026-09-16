@@ -1,0 +1,91 @@
+@layer base {
+  :root {
+    --border-radius-none: theme("borderRadius.none");
+    --border-radius-sm: theme("borderRadius.sm");
+    --border-radius-default: theme("borderRadius.DEFAULT");
+    --border-radius-md: theme("borderRadius.md");
+    --border-radius-lg: theme("borderRadius.lg");
+
+    --shadow-none: theme("boxShadow.none");
+    --shadow-sm: theme("boxShadow.sm");
+    --shadow-default: theme("boxShadow.DEFAULT");
+    --shadow-lg: theme("boxShadow.lg");
+
+    --color-gray-50: theme("colors.gray.50");
+    --color-gray-100: theme("colors.gray.100");
+    --color-gray-200: theme("colors.gray.200");
+    --color-gray-300: theme("colors.gray.300");
+    --color-gray-400: theme("colors.gray.400");
+    --color-gray-500: theme("colors.gray.500");
+    --color-gray-600: theme("colors.gray.600");
+    --color-gray-700: theme("colors.gray.700");
+    --color-gray-800: theme("colors.gray.800");
+    --color-gray-900: theme("colors.gray.900");
+
+    /* Light Variations */
+    --color-light-background: theme("colors.light.background");
+    --color-light-divider: theme("colors.light.divider");
+
+    --color-light-primary-400: theme("colors.light.primary.light");
+    --color-light-primary-500: theme("colors.light.primary.main");
+    --color-light-primary-600: theme("colors.light.primary.dark");
+
+    --color-light-secondary-400: theme("colors.light.secondary.light");
+    --color-light-secondary-500: theme("colors.light.secondary.main");
+    --color-light-secondary-600: theme("colors.light.secondary.dark");
+
+    --color-light-info-300: theme("colors.light.info.shade30");
+    --color-light-info-400: theme("colors.light.info.light");
+    --color-light-info-500: theme("colors.light.info.main");
+    --color-light-info-600: theme("colors.light.info.dark");
+
+    --color-light-success-400: theme("colors.light.success.light");
+    --color-light-success-500: theme("colors.light.success.main");
+    --color-light-success-600: theme("colors.light.success.dark");
+
+    --color-light-warning-400: theme("colors.light.warning.light");
+    --color-light-warning-500: theme("colors.light.warning.main");
+    --color-light-warning-600: theme("colors.light.warning.dark");
+
+    --color-light-error-400: theme("colors.light.error.light");
+    --color-light-error-500: theme("colors.light.error.main");
+    --color-light-error-600: theme("colors.light.error.dark");
+    --color-light-other-outlineBordered: theme(
+      "colors.light.other.outlineBordered"
+    );
+
+    /* Dark Variations */
+    --color-dark-background: theme("colors.dark.background");
+    --color-dark-action-active: theme("colors.dark.action.active");
+    --color-dark-action-selected: theme("colors.dark.action.selected");
+    --color-dark-action-disabled: theme("colors.dark.action.disabled");
+    --color-dark-text-disabled: theme("colors.dark.text.disabled");
+
+    --color-dark-primary-400: theme("colors.dark.primary.light");
+    --color-dark-primary-500: theme("colors.dark.primary.main");
+    --color-dark-primary-600: theme("colors.dark.primary.dark");
+
+    --color-dark-secondary-400: theme("colors.dark.secondary.light");
+    --color-dark-secondary-500: theme("colors.dark.secondary.main");
+    --color-dark-secondary-600: theme("colors.dark.secondary.dark");
+
+    --color-dark-info-400: theme("colors.dark.info.light");
+    --color-dark-info-500: theme("colors.dark.info.main");
+    --color-dark-info-600: theme("colors.dark.info.dark");
+
+    --color-dark-success-400: theme("colors.dark.success.light");
+    --color-dark-success-500: theme("colors.dark.success.main");
+    --color-dark-success-600: theme("colors.dark.success.dark");
+
+    --color-dark-warning-400: theme("colors.dark.warning.light");
+    --color-dark-warning-500: theme("colors.dark.warning.main");
+    --color-dark-warning-600: theme("colors.dark.warning.dark");
+
+    --color-dark-error-400: theme("colors.dark.error.light");
+    --color-dark-error-500: theme("colors.dark.error.main");
+    --color-dark-error-600: theme("colors.dark.error.dark");
+    --color-dark-other-outlineBordered: theme(
+      "colors.dark.other.outlineBordered"
+    );
+  }
+}
