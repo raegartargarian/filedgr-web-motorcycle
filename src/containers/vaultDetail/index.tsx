@@ -70,7 +70,7 @@ const VaultDetail = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto py-8 px-4">
-        {/* Vehicle Overview Card */}
+        {/* Motorcycle Overview Card */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 md:p-8 mb-8">
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">

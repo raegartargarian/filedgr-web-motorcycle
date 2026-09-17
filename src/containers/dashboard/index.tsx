@@ -73,13 +73,13 @@ const Dashboard = () => {
                 </span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                Your Vehicle
+                Your Motorcycle
                 <br />
                 <span className="text-blue-600">Service History</span>
               </h1>
               <p className="text-lg text-gray-500 mt-5 max-w-lg leading-relaxed">
                 Complete, verified documentation of every repair and service
-                performed on your vehicle. Before and after photos, invoices,
+                performed on your motorcycle. Before and after photos, invoices,
                 and parts — all stored on the blockchain.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mt-8">
@@ -87,13 +87,13 @@ const Dashboard = () => {
                   to={appRoutes.vaults.path}
                   className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl text-base font-semibold transition-colors shadow-sm"
                 >
-                  View Your Vehicles
+                  View Your Motorcycles
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
               </div>
             </motion.div>
 
-            {/* Right: 360 Car */}
+            {/* Right: 360 Motorcycle */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -105,7 +105,7 @@ const Dashboard = () => {
                 <div className="relative bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-200/60 p-6 shadow-lg">
                   <img
                     src={car360Images[current360Image]}
-                    alt="Vehicle 360 view"
+                    alt="Motorcycle 360 view"
                     className="w-full h-auto object-contain"
                     style={{ minHeight: "240px" }}
                   />
@@ -129,7 +129,7 @@ const Dashboard = () => {
               How It Works
             </h2>
             <p className="text-gray-500 mt-2 max-w-lg mx-auto">
-              A transparent, verifiable record of your vehicle's service history
+              A transparent, verifiable record of your motorcycle's service history
             </p>
           </motion.div>
 
@@ -137,9 +137,9 @@ const Dashboard = () => {
             {[
               {
                 icon: Car,
-                title: "Vehicle Registered",
+                title: "Motorcycle Registered",
                 description:
-                  "Your vehicle is registered as a digital asset with a unique blockchain identity.",
+                  "Your motorcycle is registered as a digital asset with a unique blockchain identity.",
                 color: "blue",
               },
               {
@@ -244,7 +244,7 @@ const Dashboard = () => {
         <div className="max-w-3xl mx-auto px-4 text-center">
           <motion.div {...fadeInUp}>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-              Ready to view your vehicle's history?
+              Ready to view your motorcycle's history?
             </h2>
             <p className="text-gray-500 mb-8 max-w-lg mx-auto">
               Access your complete, blockchain-verified service records in
@@ -254,7 +254,7 @@ const Dashboard = () => {
               to={appRoutes.vaults.path}
               className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-xl text-base font-semibold transition-colors shadow-sm"
             >
-              View Your Vehicles
+              View Your Motorcycles
               <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </motion.div>

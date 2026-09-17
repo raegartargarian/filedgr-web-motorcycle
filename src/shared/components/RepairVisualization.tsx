@@ -105,7 +105,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
           {[
             {
               icon: Car,
-              label: "Vehicle",
+              label: "Motorcycle",
               value:
                 [
                   repairSession.vehicleInfo.year,
@@ -307,7 +307,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                   <CardHeader className="pb-2">
                     <CardTitle className="flex items-center gap-2 text-sm font-semibold text-gray-900">
                       <Car className="w-4 h-4 text-blue-600" />
-                      Vehicle Information
+                      Motorcycle Information
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3 pt-2">

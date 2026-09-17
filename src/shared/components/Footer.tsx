@@ -5,7 +5,7 @@ export const Footer = () => {
         <div className="text-lg font-bold text-gray-900">Dealership</div>
         <div className="flex items-center">
           <span className="text-sm text-gray-400">
-            Verified automotive service with blockchain technology
+            Verified motorcycle service with blockchain technology
           </span>
         </div>
         <div className="flex space-x-6">

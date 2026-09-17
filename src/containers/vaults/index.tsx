@@ -37,8 +37,8 @@ const Vaults = () => {
         <div className="max-w-5xl mx-auto py-8 px-4">
           <div className="flex justify-center items-center mt-16">
             <NoActivity
-              title="No Vehicles Found"
-              description="No vehicles have been registered yet. Vehicles will appear here once the dealership registers them."
+              title="No Motorcycles Found"
+              description="No motorcycles have been registered yet. Motorcycles will appear here once the dealership registers them."
             />
           </div>
         </div>
@@ -57,16 +57,16 @@ const Vaults = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Your Vehicles
+                Your Motorcycles
               </h1>
               <p className="text-sm text-gray-500">
-                View your registered vehicles and their service history
+                View your registered motorcycles and their service history
               </p>
             </div>
           </div>
         </div>
 
-        {/* Vehicle Grid */}
+        {/* Motorcycle Grid */}
         {isFirstLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, index) => (

@@ -89,7 +89,7 @@ export async function generateVaultProofPdf(vault: VaultDto) {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(22);
   doc.setFont("helvetica", "bold");
-  doc.text("Vehicle Service History Proof", margin, 22);
+  doc.text("Motorcycle Service History Proof", margin, 22);
 
   doc.setFontSize(11);
   doc.setFont("helvetica", "normal");
@@ -110,7 +110,7 @@ export async function generateVaultProofPdf(vault: VaultDto) {
   // ========================================
   // VEHICLE OVERVIEW
   // ========================================
-  sectionTitle("Vehicle Overview");
+  sectionTitle("Motorcycle Overview");
 
   doc.setFillColor(249, 250, 251);
   const overviewRows: [string, string][] = [["Name", vault.name]];
@@ -157,7 +157,7 @@ export async function generateVaultProofPdf(vault: VaultDto) {
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(21, 128, 61);
-    doc.text("Vehicle Record Verified on Blockchain", margin + 6, y);
+    doc.text("Motorcycle Record Verified on Blockchain", margin + 6, y);
     y += 6;
 
     doc.setFontSize(8);
@@ -488,7 +488,7 @@ export async function generateVaultProofPdf(vault: VaultDto) {
     doc.setFontSize(7);
     doc.setTextColor(156, 163, 175);
     doc.text(
-      `Vehicle Service History Proof  —  ${vault.name}  —  Filedgr`,
+      `Motorcycle Service History Proof  —  ${vault.name}  —  Filedgr`,
       margin,
       footerY,
     );
@@ -496,6 +496,6 @@ export async function generateVaultProofPdf(vault: VaultDto) {
   }
 
   // Save
-  const fileName = `vehicle-proof-${vault.name.replace(/\s+/g, "-").toLowerCase()}.pdf`;
+  const fileName = `motorcycle-proof-${vault.name.replace(/\s+/g, "-").toLowerCase()}.pdf`;
   doc.save(fileName);
 }

@@ -50,7 +50,7 @@ export const Header = () => {
                     to={appRoutes.vaults.path}
                     className="text-slate-700 hover:text-blue-600"
                   >
-                    My Vehicles
+                    My Motorcycles
                   </Link>
                 </DropdownMenuItem>
                 {isAuthenticated && (
@@ -92,7 +92,7 @@ export const Header = () => {
                 isActive ? activeClassRoute : inactiveClassRoute
               }
             >
-              My Vehicles
+              My Motorcycles
             </NavLink>
           </nav>
 
@@ -107,7 +107,7 @@ export const Header = () => {
               </button>
             ) : (
               <div className="text-sm text-slate-600 font-medium">
-                Verified Auto Service
+                Verified Motorcycle Service
               </div>
             )}
           </div>
