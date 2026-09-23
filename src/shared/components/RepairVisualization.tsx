@@ -1,26 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileThumbnailButton } from "@/shared/components/FileThumbnailButton";
+import { FileCard } from "@/shared/components/FileCard";
+import { FileLightbox } from "@/shared/components/FileLightbox";
+import { StatTile } from "@/shared/components/StatTile";
 import { blobUrlResolver } from "@/shared/utils/previewResolver";
-import { ProcessedRepairData } from "@/shared/utils/zipHandler";
-import { FilePreview } from "@filedgr/web-core/preview";
-import { AnimatePresence, motion } from "framer-motion";
+import { ProcessedRepairData, RepairImage } from "@/shared/utils/zipHandler";
+import { PreviewSource } from "@filedgr/web-core/preview";
+import { motion } from "framer-motion";
 import {
+  Bike,
   Calendar,
-  Car,
   Clock,
   DollarSign,
-  Download,
   FileText,
   Hash,
   Image as ImageIcon,
-  Maximize2,
   Settings,
   User,
   Wrench,
-  X,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 interface RepairVisualizationProps {
   data: ProcessedRepairData;
@@ -41,71 +40,174 @@ const staggerItem = {
   animate: { opacity: 1, y: 0, transition: { duration: 0.35 } },
 };
 
-const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedPdf, setSelectedPdf] = useState<{
-    url: string;
-    name: string;
-    filename: string;
-  } | null>(null);
+const money = (value?: number | null) =>
+  value != null ? `$${value.toFixed(2)}` : "N/A";
 
-  if (
-    !data ||
-    (!data.repairData?.length &&
-      !data.images?.length &&
-      !data.documents?.length)
-  ) {
+const imageSource = (image: RepairImage): PreviewSource => ({
+  id: image.url ?? image.filename,
+  filename: image.filename,
+  mimeType: "image/jpeg",
+});
+
+/** Field label + value, the way the Details tab lays them out. */
+const Field = ({
+  label,
+  value,
+  mono = false,
+  icon: Icon,
+}: {
+  label: string;
+  value?: React.ReactNode;
+  mono?: boolean;
+  icon?: React.ElementType;
+}) => (
+  <div>
+    <div className="u-eyebrow">{label}</div>
+    <p
+      className={`mt-0.5 flex items-center gap-1.5 text-sm font-medium text-foreground ${mono ? "font-mono" : ""}`}
+    >
+      {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground" />}
+      {value || "N/A"}
+    </p>
+  </div>
+);
+
+/** One before-or-after tile inside a photo pair. */
+const PhotoTile = ({
+  image,
+  label,
+  tone,
+  onOpen,
+}: {
+  image?: RepairImage;
+  label: string;
+  tone: "status-error" | "status-success";
+  onOpen?: () => void;
+}) => (
+  <div>
+    <span
+      className={`mb-2 inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${tone}`}
+    >
+      {label}
+    </span>
+    {image?.url ? (
+      <motion.button
+        type="button"
+        whileHover={{ scale: 1.015 }}
+        whileTap={{ scale: 0.99 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        onClick={onOpen}
+        className="group relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-border bg-abyss-900/60"
+      >
+        <img
+          src={image.url}
+          alt={`${label} ${image.category}`}
+          className="aspect-[4/3] w-full object-cover"
+        />
+        <span className="absolute inset-0 rounded-xl transition-colors group-hover:bg-neon-400/10" />
+      </motion.button>
+    ) : (
+      <div className="flex aspect-[4/3] w-full items-center justify-center rounded-xl border border-border bg-abyss-900/60">
+        <span className="text-sm text-muted-foreground">
+          No {label.toLowerCase()} image
+        </span>
+      </div>
+    )}
+  </div>
+);
+
+const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
+  const [photoIndex, setPhotoIndex] = useState<number | null>(null);
+  const [docIndex, setDocIndex] = useState<number | null>(null);
+
+  const matches = data?.imageMatches ?? [];
+  const repairSession = data?.repairData?.[0];
+  const documents = data?.documents ?? [];
+
+  // Every before/after photo in display order, so the lightbox can walk them.
+  const photos = useMemo(
+    () =>
+      matches.flatMap((m) =>
+        [m.before, m.after].filter((i): i is RepairImage => !!i?.url),
+      ),
+    [matches],
+  );
+  const photoSources = useMemo(() => photos.map(imageSource), [photos]);
+  const photoIndexOf = (image?: RepairImage) =>
+    image ? photos.indexOf(image) : -1;
+
+  const docSources = useMemo<PreviewSource[]>(
+    () =>
+      documents
+        .filter((d) => d.url)
+        .map((d) => ({
+          id: d.url!,
+          filename: d.filename || d.name,
+          mimeType: "application/pdf",
+        })),
+    [documents],
+  );
+
+  // Titles repeat when a category has several sets ("Chain" twice), so number
+  // only those.
+  const categoryCounts = matches.reduce<Record<string, number>>((acc, m) => {
+    acc[m.category] = (acc[m.category] ?? 0) + 1;
+    return acc;
+  }, {});
+  const seen: Record<string, number> = {};
+  const titleFor = (category: string) => {
+    seen[category] = (seen[category] ?? 0) + 1;
+    const pretty = category.replace(/_/g, " ");
+    return categoryCounts[category] > 1
+      ? `${pretty} · set ${seen[category]}`
+      : pretty;
+  };
+
+  if (!data || (!repairSession && !matches.length && !documents.length)) {
     return (
-      <div className="text-center p-8">
-        <p className="text-gray-600">No repair data available</p>
+      <div className="p-8 text-center">
+        <p className="text-muted-foreground">No repair data available</p>
       </div>
     );
   }
 
-  const repairSession = data.repairData[0];
-
-  // Compute which tabs have data
   const availableTabs: Array<{
     value: string;
     label: string;
     icon: React.ElementType;
   }> = [];
-  if (data.imageMatches && data.imageMatches.length > 0) {
+  if (matches.length > 0)
     availableTabs.push({ value: "images", label: "Photos", icon: ImageIcon });
-  }
-  if (repairSession) {
+  if (repairSession)
     availableTabs.push({ value: "details", label: "Details", icon: FileText });
-  }
-  if (data.documents && data.documents.length > 0) {
+  if (documents.length > 0)
     availableTabs.push({ value: "documents", label: "Docs", icon: FileText });
-  }
-  if (repairSession?.partsUsed && repairSession.partsUsed.length > 0) {
+  if (repairSession?.partsUsed?.length)
     availableTabs.push({ value: "parts", label: "Parts", icon: Settings });
-  }
   const defaultTab = availableTabs[0]?.value ?? "details";
   const gridCols =
-    availableTabs.length === 1
-      ? "grid-cols-1"
-      : availableTabs.length === 2
-        ? "grid-cols-2"
-        : availableTabs.length === 3
-          ? "grid-cols-3"
-          : "grid-cols-4";
+    ["", "grid-cols-1", "grid-cols-2", "grid-cols-3"][availableTabs.length] ??
+    "grid-cols-4";
+
+  const parts = repairSession?.partsUsed ?? [];
+  const partsTotal = parts.reduce(
+    (sum, p) => sum + (p.cost ?? 0) * (p.quantity ?? 1),
+    0,
+  );
 
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
       {repairSession && (
         <motion.div
           variants={staggerContainer}
           initial="initial"
           animate="animate"
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+          className="grid grid-cols-2 gap-3 lg:grid-cols-4"
         >
           {[
             {
-              icon: Car,
-              label: "Vehicle",
+              icon: Bike,
+              label: "Motorcycle",
               value:
                 [
                   repairSession.vehicleInfo.year,
@@ -114,184 +216,96 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                 ]
                   .filter(Boolean)
                   .join(" ") || "N/A",
-              color: "text-blue-600",
-              bg: "bg-blue-50",
-              border: "border-blue-100",
+              tone: "primary" as const,
             },
             {
               icon: Wrench,
-              label: "Service Type",
-              value: repairSession.repairInfo.type || "General Service",
-              color: "text-green-600",
-              bg: "bg-green-50",
-              border: "border-green-100",
+              label: "Service type",
+              value: repairSession.repairInfo.type || "General service",
+              tone: "success" as const,
             },
             {
               icon: DollarSign,
-              label: "Total Cost",
-              value: repairSession.repairInfo.cost
-                ? `$${repairSession.repairInfo.cost.toFixed(2)}`
-                : "N/A",
-              color: "text-emerald-700",
-              bg: "bg-emerald-50",
-              border: "border-emerald-100",
+              label: "Total cost",
+              value: money(repairSession.repairInfo.cost),
+              tone: "warning" as const,
             },
             {
               icon: Clock,
-              label: "Labor Hours",
+              label: "Labour hours",
               value: repairSession.repairInfo.laborHours
                 ? `${repairSession.repairInfo.laborHours}h`
                 : "N/A",
-              color: "text-orange-600",
-              bg: "bg-orange-50",
-              border: "border-orange-100",
+              tone: "neutral" as const,
             },
           ].map((card) => (
             <motion.div key={card.label} variants={staggerItem}>
-              <Card className="bg-white border border-gray-200 shadow-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-9 h-9 rounded-lg ${card.bg} border ${card.border} flex items-center justify-center flex-shrink-0`}
-                    >
-                      <card.icon className={`w-4 h-4 ${card.color}`} />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">
-                        {card.label}
-                      </div>
-                      <div className="text-sm font-bold text-gray-900 truncate">
-                        {card.value}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <StatTile {...card} />
             </motion.div>
           ))}
         </motion.div>
       )}
 
-      {/* Tabs */}
       <motion.div {...fadeIn} transition={{ duration: 0.4, delay: 0.2 }}>
         <Tabs defaultValue={defaultTab} className="w-full">
           <TabsList
-            className={`grid w-full ${gridCols} bg-gray-100 gap-1 p-1 rounded-xl`}
+            className={`grid w-full ${gridCols} gap-1 rounded-xl border border-border bg-steel-800 p-1`}
           >
             {availableTabs.map((tab) => (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="flex items-center gap-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-xs sm:text-sm"
+                className="flex items-center gap-1.5 rounded-lg text-xs data-[state=active]:bg-steel-700 data-[state=active]:text-glow-50 sm:text-sm"
               >
-                <tab.icon className="w-3.5 h-3.5" />
+                <tab.icon className="h-3.5 w-3.5" />
                 <span>{tab.label}</span>
               </TabsTrigger>
             ))}
           </TabsList>
 
-          {/* Before/After Photos */}
+          {/* Photos */}
           <TabsContent value="images" className="mt-6">
-            {data.imageMatches && data.imageMatches.length > 0 ? (
-              <motion.div
-                variants={staggerContainer}
-                initial="initial"
-                animate="animate"
-                className="space-y-6"
-              >
-                {data.imageMatches.map((match, index) => (
-                  <motion.div key={index} variants={staggerItem}>
-                    <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden">
-                      <CardHeader className="pb-3 pt-4 px-5">
-                        <CardTitle className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                          <span className="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">
-                            {index + 1}
-                          </span>
-                          {match.category.replace(/_/g, " ")}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="px-5 pb-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {/* Before */}
-                          <div>
-                            <div className="flex items-center gap-1.5 mb-2">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-red-50 text-red-600 text-[11px] font-semibold uppercase tracking-wide border border-red-100">
-                                Before
-                              </span>
-                            </div>
-                            {match.before ? (
-                              <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                transition={{
-                                  type: "spring",
-                                  stiffness: 300,
-                                  damping: 20,
-                                }}
-                                className="relative cursor-pointer rounded-xl overflow-hidden border border-gray-200 bg-gray-50"
-                                onClick={() =>
-                                  setSelectedImage(match.before!.url!)
-                                }
-                              >
-                                <img
-                                  src={match.before.url}
-                                  alt={`Before ${match.category}`}
-                                  className="w-full aspect-[4/3] object-cover"
-                                />
-                                <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors rounded-xl" />
-                              </motion.div>
-                            ) : (
-                              <div className="w-full aspect-[4/3] bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center">
-                                <span className="text-gray-400 text-sm">
-                                  No before image
-                                </span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* After */}
-                          <div>
-                            <div className="flex items-center gap-1.5 mb-2">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-green-50 text-green-600 text-[11px] font-semibold uppercase tracking-wide border border-green-100">
-                                After
-                              </span>
-                            </div>
-                            {match.after ? (
-                              <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                transition={{
-                                  type: "spring",
-                                  stiffness: 300,
-                                  damping: 20,
-                                }}
-                                className="relative cursor-pointer rounded-xl overflow-hidden border border-gray-200 bg-gray-50"
-                                onClick={() =>
-                                  setSelectedImage(match.after!.url!)
-                                }
-                              >
-                                <img
-                                  src={match.after.url}
-                                  alt={`After ${match.category}`}
-                                  className="w-full aspect-[4/3] object-cover"
-                                />
-                                <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors rounded-xl" />
-                              </motion.div>
-                            ) : (
-                              <div className="w-full aspect-[4/3] bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center">
-                                <span className="text-gray-400 text-sm">
-                                  No after image
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
-            ) : null}
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+              className="space-y-6"
+            >
+              {matches.map((match, index) => (
+                <motion.div key={index} variants={staggerItem}>
+                  <Card className="overflow-hidden">
+                    <CardHeader className="px-5 pb-3 pt-4">
+                      <CardTitle className="flex items-center gap-2 text-sm capitalize">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+                          {index + 1}
+                        </span>
+                        {titleFor(match.category)}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-5 pb-5">
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <PhotoTile
+                          image={match.before}
+                          label="Before"
+                          tone="status-error"
+                          onOpen={() =>
+                            setPhotoIndex(photoIndexOf(match.before))
+                          }
+                        />
+                        <PhotoTile
+                          image={match.after}
+                          label="After"
+                          tone="status-success"
+                          onOpen={() =>
+                            setPhotoIndex(photoIndexOf(match.after))
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
           </TabsContent>
 
           {/* Details */}
@@ -300,52 +314,40 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               variants={staggerContainer}
               initial="initial"
               animate="animate"
-              className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+              className="grid grid-cols-1 gap-4 lg:grid-cols-2"
             >
               <motion.div variants={staggerItem}>
-                <Card className="bg-white border border-gray-200 shadow-sm">
+                <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                      <Car className="w-4 h-4 text-blue-600" />
-                      Vehicle Information
+                    <CardTitle className="flex items-center gap-2 text-sm">
+                      <Bike className="h-4 w-4 text-primary" />
+                      Motorcycle information
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3 pt-2">
-                    <div className="grid grid-cols-2 gap-3">
-                      {[
-                        {
-                          label: "Make",
-                          value: repairSession?.vehicleInfo.make,
-                        },
-                        {
-                          label: "Model",
-                          value: repairSession?.vehicleInfo.model,
-                        },
-                        {
-                          label: "Year",
-                          value: repairSession?.vehicleInfo.year,
-                        },
-                        {
-                          label: "Mileage",
-                          value: repairSession?.vehicleInfo.mileage,
-                        },
-                      ].map((item) => (
-                        <div key={item.label}>
-                          <label className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
-                            {item.label}
-                          </label>
-                          <p className="text-sm text-gray-900 font-medium">
-                            {item.value || "N/A"}
-                          </p>
-                        </div>
-                      ))}
+                  <CardContent className="pt-2">
+                    <div className="grid grid-cols-2 gap-4">
+                      <Field
+                        label="Make"
+                        value={repairSession?.vehicleInfo.make}
+                      />
+                      <Field
+                        label="Model"
+                        value={repairSession?.vehicleInfo.model}
+                      />
+                      <Field
+                        label="Year"
+                        value={repairSession?.vehicleInfo.year}
+                      />
+                      <Field
+                        label="Mileage"
+                        value={repairSession?.vehicleInfo.mileage}
+                      />
                       <div className="col-span-2">
-                        <label className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
-                          VIN
-                        </label>
-                        <p className="text-sm text-gray-900 font-mono">
-                          {repairSession?.vehicleInfo.vin || "N/A"}
-                        </p>
+                        <Field
+                          label="VIN"
+                          value={repairSession?.vehicleInfo.vin}
+                          mono
+                        />
                       </div>
                     </div>
                   </CardContent>
@@ -353,52 +355,34 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               </motion.div>
 
               <motion.div variants={staggerItem}>
-                <Card className="bg-white border border-gray-200 shadow-sm">
+                <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                      <Wrench className="w-4 h-4 text-green-600" />
-                      Service Information
+                    <CardTitle className="flex items-center gap-2 text-sm">
+                      <Wrench className="h-4 w-4 text-trellis-400" />
+                      Service information
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3 pt-2">
-                    {[
-                      {
-                        icon: Calendar,
-                        label: "Service Date",
-                        value: repairSession?.repairInfo.date,
-                      },
-                      {
-                        icon: User,
-                        label: "Technician",
-                        value: repairSession?.repairInfo.technician,
-                      },
-                    ].map((item) => (
-                      <div key={item.label}>
-                        <label className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
-                          {item.label}
-                        </label>
-                        <p className="text-sm text-gray-900 flex items-center gap-1.5 font-medium">
-                          <item.icon className="w-3.5 h-3.5 text-gray-400" />
-                          {item.value || "N/A"}
-                        </p>
-                      </div>
-                    ))}
+                  <CardContent className="space-y-4 pt-2">
+                    <Field
+                      label="Service date"
+                      value={repairSession?.repairInfo.date}
+                      icon={Calendar}
+                    />
+                    <Field
+                      label="Technician"
+                      value={repairSession?.repairInfo.technician}
+                      icon={User}
+                    />
                     <div>
-                      <label className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
-                        Description
-                      </label>
-                      <p className="text-sm text-gray-700 leading-relaxed">
+                      <div className="u-eyebrow">Description</div>
+                      <p className="mt-0.5 text-sm leading-relaxed text-mist-100">
                         {repairSession?.repairInfo.description || "N/A"}
                       </p>
                     </div>
-                    <div>
-                      <label className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
-                        Warranty
-                      </label>
-                      <p className="text-sm text-gray-900 font-medium">
-                        {repairSession?.repairInfo.warranty || "N/A"}
-                      </p>
-                    </div>
+                    <Field
+                      label="Warranty"
+                      value={repairSession?.repairInfo.warranty}
+                    />
                   </CardContent>
                 </Card>
               </motion.div>
@@ -407,229 +391,104 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
 
           {/* Documents */}
           <TabsContent value="documents" className="mt-6">
-            {data.documents && data.documents.length > 0 ? (
-              <motion.div
-                variants={staggerContainer}
-                initial="initial"
-                animate="animate"
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
-              >
-                {data.documents.map((doc, index) => (
-                  <motion.div key={index} variants={staggerItem}>
-                    <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden">
-                      <CardContent className="p-0">
-                        <div className="border-b border-gray-100 px-4 py-3 flex items-center justify-between">
-                          <h4 className="font-medium text-gray-900 text-sm capitalize flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-gray-400" />
-                            {doc.name}
-                          </h4>
-                          <div className="flex items-center gap-3">
-                            {doc.url && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setSelectedPdf({
-                                    url: doc.url!,
-                                    name: doc.name,
-                                    filename: doc.filename || doc.name,
-                                  })
-                                }
-                                className="inline-flex items-center gap-1 text-gray-500 hover:text-gray-700 text-xs font-medium"
-                              >
-                                <Maximize2 className="w-3 h-3" />
-                                Full screen
-                              </button>
-                            )}
-                            <a
-                              href={doc.url}
-                              download={doc.filename}
-                              className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-xs font-medium"
-                            >
-                              <Download className="w-3 h-3" />
-                              Download
-                            </a>
-                          </div>
-                        </div>
-                        <div className="relative bg-gray-50 h-80">
-                          {doc.url && (
-                            <FileThumbnailButton
-                              source={{
-                                id: doc.url,
-                                filename: doc.filename || doc.name,
-                                mimeType: "application/pdf",
-                              }}
-                              resolver={blobUrlResolver}
-                              onOpen={() =>
-                                setSelectedPdf({
-                                  url: doc.url!,
-                                  name: doc.name,
-                                  filename: doc.filename || doc.name,
-                                })
-                              }
-                            />
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
-            ) : null}
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+              className="grid grid-cols-2 gap-4 md:grid-cols-3"
+            >
+              {docSources.map((source, index) => (
+                <motion.div key={source.id} variants={staggerItem}>
+                  <FileCard
+                    source={source}
+                    resolver={blobUrlResolver}
+                    onOpen={() => setDocIndex(index)}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
           </TabsContent>
 
           {/* Parts */}
           <TabsContent value="parts" className="mt-6">
-            {repairSession?.partsUsed && repairSession.partsUsed.length > 0 ? (
-              <motion.div
-                variants={staggerContainer}
-                initial="initial"
-                animate="animate"
-              >
-                <Card className="bg-white border border-gray-200 shadow-sm">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-semibold text-gray-900">
-                      Parts Used
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {repairSession.partsUsed.map((part, index) => (
-                        <motion.div
-                          key={index}
-                          variants={staggerItem}
-                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors gap-2"
-                        >
-                          <div className="min-w-0">
-                            <h4 className="text-sm font-medium text-gray-900">
-                              {part.partName}
-                            </h4>
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 mt-0.5">
-                              {part.partNumber && (
-                                <span className="flex items-center gap-0.5">
-                                  <Hash className="w-2.5 h-2.5" />
-                                  {part.partNumber}
-                                </span>
-                              )}
-                              {part.quantity && (
-                                <span>Qty: {part.quantity}</span>
-                              )}
-                              {part.warranty && (
-                                <span>Warranty: {part.warranty}</span>
-                              )}
-                            </div>
-                          </div>
-                          {part.cost != null && (
-                            <div className="text-sm font-bold text-gray-900 flex-shrink-0">
-                              ${part.cost.toFixed(2)}
-                            </div>
-                          )}
-                        </motion.div>
-                      ))}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Parts used</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="hidden grid-cols-[1fr_auto_auto_auto] gap-x-6 px-3 pb-2 md:grid">
+                  {["Part", "Qty", "Warranty", "Cost"].map((h) => (
+                    <div key={h} className="u-eyebrow last:text-right">
+                      {h}
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ) : null}
+                  ))}
+                </div>
+                <motion.div
+                  variants={staggerContainer}
+                  initial="initial"
+                  animate="animate"
+                  className="divide-y divide-border"
+                >
+                  {parts.map((part, index) => (
+                    <motion.div
+                      key={index}
+                      variants={staggerItem}
+                      className="grid gap-x-6 gap-y-1 px-3 py-3 transition-colors hover:bg-steel-700/40 md:grid-cols-[1fr_auto_auto_auto] md:items-center"
+                    >
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-foreground">
+                          {part.partName}
+                        </div>
+                        {part.partNumber && (
+                          <div className="mt-0.5 flex items-center gap-1 font-mono text-xs text-muted-foreground">
+                            <Hash className="h-3 w-3" />
+                            {part.partNumber}
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-sm text-mist-200">
+                        <span className="md:hidden">Qty </span>
+                        {part.quantity ?? 1}
+                      </div>
+                      <div>
+                        {part.warranty && (
+                          <span className="inline-flex rounded-md border border-border bg-steel-700 px-2 py-0.5 text-[11px] text-mist-200">
+                            {part.warranty}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-sm font-medium text-glow-50 md:text-right">
+                        {money(part.cost)}
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+                <div className="mt-2 flex items-center justify-between border-t border-primary/30 px-3 pt-3">
+                  <span className="u-eyebrow">Parts total</span>
+                  <span className="text-base font-medium text-glow-50">
+                    {money(partsTotal)}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </motion.div>
 
-      {/* Lightbox Modal */}
-      <AnimatePresence>
-        {selectedImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={() => setSelectedImage(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="relative max-w-5xl max-h-[90vh] w-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setSelectedImage(null)}
-                className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-              <img
-                src={selectedImage}
-                alt="Repair photo"
-                className="w-full h-auto max-h-[85vh] object-contain rounded-xl"
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Full-page PDF preview */}
-      <AnimatePresence>
-        {selectedPdf && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4"
-            onClick={() => setSelectedPdf(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 26 }}
-              className="relative flex flex-col w-full h-full max-w-6xl bg-white rounded-xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-gray-200 shrink-0">
-                <h3 className="text-sm font-semibold text-gray-900 capitalize flex items-center gap-2 min-w-0">
-                  <FileText className="w-4 h-4 text-gray-400 shrink-0" />
-                  <span className="truncate">{selectedPdf.name}</span>
-                </h3>
-                <div className="flex items-center gap-4 shrink-0">
-                  <a
-                    href={selectedPdf.url}
-                    download={selectedPdf.filename}
-                    className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-xs font-medium"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    Download
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedPdf(null)}
-                    aria-label="Close"
-                    className="text-gray-400 hover:text-gray-700 transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* PDF body */}
-              <div className="flex-1 min-h-0 bg-gray-50">
-                <FilePreview
-                  source={{
-                    id: selectedPdf.url,
-                    filename: selectedPdf.filename,
-                    mimeType: "application/pdf",
-                  }}
-                  resolver={blobUrlResolver}
-                  className="fdgr-host h-full"
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <FileLightbox
+        items={photoSources}
+        index={photoIndex}
+        resolver={blobUrlResolver}
+        onClose={() => setPhotoIndex(null)}
+        onIndexChange={setPhotoIndex}
+      />
+      <FileLightbox
+        items={docSources}
+        index={docIndex}
+        resolver={blobUrlResolver}
+        onClose={() => setDocIndex(null)}
+        onIndexChange={setDocIndex}
+      />
     </div>
   );
 };

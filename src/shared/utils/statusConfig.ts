@@ -1,6 +1,7 @@
 // Backend status → label + badge classes. Labels and semantic colours come
 // from @filedgr/web-core/status so they match the main Filedgr web app; this
-// file only maps the semantic colour onto this app's Tailwind palette.
+// file only maps the semantic colour onto this app's status pill utilities
+// (see _utilities.scss).
 import {
   AttachmentStatus,
   getAttachmentStatusColor,
@@ -17,10 +18,14 @@ import {
 export type StatusEntity = "vault" | "stream" | "attachment";
 export type StatusEntry = { label: string; className: string };
 
+/** Badge classes for a record taken out of its list; not a backend status. */
+export const ARCHIVED_BADGE_CLASS =
+  "border-steel-500 bg-steel-700 text-mist-200";
+
 const COLOR_CLASSES: Record<StatusColor, string> = {
-  success: "bg-green-50 text-green-700 border-green-200",
-  error: "bg-red-50 text-red-700 border-red-200",
-  secondary: "bg-amber-50 text-amber-700 border-amber-200",
+  success: "status-success",
+  error: "status-error",
+  secondary: "status-warning",
 };
 
 const RESOLVERS: Record<

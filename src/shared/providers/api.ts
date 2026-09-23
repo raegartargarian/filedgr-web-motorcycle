@@ -34,8 +34,15 @@ export const { getSingleVault, getSingleAttachment } = api;
 export const getVaults = (templateIds: string[], page: number = 1) =>
   api.getVaults(page, "", "created_at", "DESC", false, undefined, templateIds);
 
+/**
+ * `archived` follows the backend's reading: left out, the page holds live
+ * records only; `true` includes the archived ones alongside them. There is no
+ * archived-only mode. An empty page comes back as 204 with no body — see
+ * `readListPage`.
+ */
 export const getStreamAttachments = (
   streamCode: string,
   page: number = 1,
   pageSize: number = PAGE_SIZE,
-) => api.getTokenAttachments(streamCode, page, pageSize);
+  archived?: boolean,
+) => api.getTokenAttachments(streamCode, page, pageSize, archived);

@@ -1,3 +1,4 @@
+import { truncateTxHash } from "@filedgr/web-core/format";
 import { Check, Copy } from "lucide-react";
 import React, { useState } from "react";
 
@@ -5,17 +6,15 @@ interface CopyableHashProps {
   value: string;
   /** Number of leading/trailing characters to keep when shortening. */
   chars?: number;
+  /** Pre-formatted label; defaults to the shortened value. */
+  display?: string;
   className?: string;
 }
-
-const shorten = (value: string, chars: number) => {
-  if (value.length <= chars * 2 + 1) return value;
-  return `${value.slice(0, chars)}…${value.slice(-chars)}`;
-};
 
 export const CopyableHash: React.FC<CopyableHashProps> = ({
   value,
   chars = 6,
+  display,
   className = "",
 }) => {
   const [copied, setCopied] = useState(false);
@@ -37,13 +36,13 @@ export const CopyableHash: React.FC<CopyableHashProps> = ({
       type="button"
       onClick={handleCopy}
       title={copied ? "Copied!" : value}
-      className={`inline-flex items-center gap-1.5 text-xs text-gray-400 font-mono hover:text-gray-600 transition-colors ${className}`}
+      className={`inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-glow-50 ${className}`}
     >
-      <span>{shorten(value, chars)}</span>
+      <span>{display ?? truncateTxHash(value, chars, chars)}</span>
       {copied ? (
-        <Check className="w-3 h-3 text-green-600" />
+        <Check className="h-3 w-3 text-trellis-400" />
       ) : (
-        <Copy className="w-3 h-3" />
+        <Copy className="h-3 w-3" />
       )}
     </button>
   );

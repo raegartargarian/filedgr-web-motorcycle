@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import NoActivity from "@/shared/components/EmptyData";
 import { LoadingIndicator } from "@/shared/components/LoadingIndicator";
 import { useInfiniteScroll } from "@filedgr/web-core/react";
-import { Car } from "lucide-react";
+import { Bike } from "lucide-react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GlobalSelectors } from "../global/selectors";
@@ -33,12 +33,12 @@ const Vaults = () => {
 
   if (!isFirstLoading && vaults.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <div className="max-w-5xl mx-auto py-8 px-4">
           <div className="flex justify-center items-center mt-16">
             <NoActivity
-              title="No Vehicles Found"
-              description="No vehicles have been registered yet. Vehicles will appear here once the dealership registers them."
+              title="No Motorcycles Found"
+              description="No motorcycles have been registered yet. Motorcycles will appear here once the dealership registers them."
             />
           </div>
         </div>
@@ -47,49 +47,44 @@ const Vaults = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto py-8 px-4">
-        {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
-              <Car className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Your Vehicles
-              </h1>
-              <p className="text-sm text-gray-500">
-                View your registered vehicles and their service history
-              </p>
-            </div>
+    <div className="min-h-screen">
+      <div className="container mx-auto max-w-6xl px-4 py-10">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <span className="u-eyebrow">Your garage</span>
+            <h1 className="u-display mt-2 text-4xl md:text-5xl">
+              Your motorcycles
+            </h1>
           </div>
+          {!isFirstLoading && (
+            <span className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Bike className="h-4 w-4 text-primary" />
+              {vaults.length} registered
+            </span>
+          )}
         </div>
 
-        {/* Vehicle Grid */}
         {isFirstLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: 6 }).map((_, index) => (
+          <div className="grid gap-6 md:grid-cols-2">
+            {Array.from({ length: 2 }).map((_, index) => (
               <Skeleton
-                className="h-[230px] w-full bg-gray-200 rounded-xl"
+                className="h-[44svh] min-h-[340px] w-full rounded-2xl"
                 key={index}
               />
             ))}
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid gap-6 md:grid-cols-2">
               {vaults.map((vault) => (
-                <div key={vault.id}>
-                  <VaultItem vault={vault} />
-                </div>
+                <VaultItem key={vault.id} vault={vault} />
               ))}
             </div>
             {hasMore && vaults.length > 0 && (
               <div ref={sentinelRef} aria-hidden className="h-px w-full" />
             )}
             {isFetching && (
-              <div className="w-full flex items-center justify-center mt-8">
+              <div className="mt-8 flex w-full items-center justify-center">
                 <LoadingIndicator />
               </div>
             )}

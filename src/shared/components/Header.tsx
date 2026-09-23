@@ -2,117 +2,116 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import { LogOut, Menu } from "lucide-react";
+import { useWeb3Auth } from "@/containers/global/Web3AuthProvider";
+import { cn } from "@/lib/utils";
+import { useWalletAddress } from "@filedgr/web-core/auth";
+import { truncateAddress } from "@filedgr/web-core/format";
+import { useIsMobileOrTablet } from "@filedgr/web-core/react";
+import { LogOut, Menu, Wallet } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { appRoutes } from "../constants/routes";
-import { useWeb3Auth } from "@/containers/global/Web3AuthProvider";
+import { CopyableHash } from "./CopyableHash";
+import { Logo } from "./Logo";
+
+const NAV = [
+  { to: appRoutes.dashboard.path, label: "Home", end: true },
+  { to: appRoutes.vaults.path, label: "My Motorcycles", end: false },
+];
+
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  cn(
+    "relative py-1 text-sm font-medium transition-colors after:absolute after:inset-x-0 after:-bottom-[21px] after:h-px after:bg-primary after:opacity-0 after:transition-opacity",
+    isActive
+      ? "text-primary after:opacity-100"
+      : "text-mist-200 hover:text-glow-50",
+  );
 
 export const Header = () => {
-  const { logout, isAuthenticated } = useWeb3Auth() || {};
-
-  const baseClassRoute =
-    "hover:text-blue-600 pb-1 transition-colors text-slate-700 font-medium";
-  const activeClassRoute =
-    baseClassRoute + " border-b-2 text-blue-600 border-b-blue-600";
-  const inactiveClassRoute =
-    baseClassRoute + " text-slate-700 hover:text-blue-600";
+  const { logout } = useWeb3Auth() || {};
+  const walletAddress = useWalletAddress();
+  const isMobile = useIsMobileOrTablet();
 
   return (
-    <>
-      <header className="bg-white text-slate-900 h-[64px] border-b border-gray-100 shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto flex h-full items-center justify-between px-4">
-          {/* Hamburger Menu for mobile/tablet */}
-          <div className="md:hidden text-slate-900 focus:outline-none">
+    <header className="sticky top-0 z-50 h-16 border-b border-border/60 bg-abyss-900/70 backdrop-blur-md">
+      <div className="container mx-auto flex h-full items-center justify-between px-4">
+        <Logo />
+
+        {!isMobile && (
+          <nav className="flex items-center gap-8">
+            {NAV.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={navLinkClass}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+        )}
+
+        <div className="flex items-center gap-2">
+          {walletAddress && !isMobile && (
+            <span className="flex items-center gap-2 rounded-full border border-border bg-steel-800/80 py-1.5 pl-3 pr-2">
+              <Wallet className="h-3.5 w-3.5 text-primary" />
+              <CopyableHash
+                value={walletAddress}
+                display={truncateAddress(walletAddress)}
+              />
+            </span>
+          )}
+
+          {isMobile ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className="p-2 hover:bg-slate-100 rounded">
-                <Menu size={24} className="text-slate-700" />
+              <DropdownMenuTrigger
+                aria-label="Open menu"
+                className="rounded-lg p-2 text-mist-200 transition-colors hover:bg-steel-700 hover:text-glow-50"
+              >
+                <Menu size={22} />
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white border border-slate-200 shadow-lg">
-                <DropdownMenuLabel className="text-slate-900 font-semibold">
-                  Navigation
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-slate-200" />
-                <DropdownMenuItem className="text-slate-700 hover:bg-slate-100 focus:bg-slate-100">
-                  <Link
-                    to={appRoutes.dashboard.path}
-                    className="text-slate-700"
-                  >
-                    Home
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="text-slate-700 hover:bg-slate-100 focus:bg-slate-100">
-                  <Link
-                    to={appRoutes.vaults.path}
-                    className="text-slate-700 hover:text-blue-600"
-                  >
-                    My Vehicles
-                  </Link>
-                </DropdownMenuItem>
-                {isAuthenticated && (
+              <DropdownMenuContent align="end" className="w-52">
+                {NAV.map((item) => (
+                  <DropdownMenuItem key={item.to} asChild>
+                    <Link to={item.to}>{item.label}</Link>
+                  </DropdownMenuItem>
+                ))}
+                {walletAddress && (
                   <>
-                    <DropdownMenuSeparator className="bg-slate-200" />
-                    <DropdownMenuItem
-                      onClick={logout}
-                      className="text-red-600 hover:bg-red-50 focus:bg-red-50"
-                    >
-                      <LogOut size={16} className="mr-2" />
-                      Logout
-                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <div className="flex items-center gap-2 px-2 py-1.5">
+                      <Wallet className="h-3.5 w-3.5 text-primary" />
+                      <CopyableHash
+                        value={walletAddress}
+                        display={truncateAddress(walletAddress)}
+                      />
+                    </div>
                   </>
                 )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="text-red-300 focus:text-red-300"
+                >
+                  <LogOut size={16} />
+                  Logout
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-
-          {/* Website Title */}
-          <Link to="/" className="flex-shrink-0">
-            <div className="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
-              Dealership
-            </div>
-          </Link>
-
-          {/* Menu Links for desktop */}
-          <nav className="hidden md:flex space-x-8">
-            <NavLink
-              to={appRoutes.dashboard.path}
-              className={({ isActive }) =>
-                isActive ? activeClassRoute : inactiveClassRoute
-              }
+          ) : (
+            <button
+              onClick={logout}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-mist-200 transition-colors hover:bg-steel-700 hover:text-glow-50"
             >
-              Home
-            </NavLink>
-            <NavLink
-              to={appRoutes.vaults.path}
-              className={({ isActive }) =>
-                isActive ? activeClassRoute : inactiveClassRoute
-              }
-            >
-              My Vehicles
-            </NavLink>
-          </nav>
-
-          <div className="flex-shrink-0">
-            {isAuthenticated ? (
-              <button
-                onClick={logout}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-              >
-                <LogOut size={18} />
-                <span className="hidden sm:inline">Logout</span>
-              </button>
-            ) : (
-              <div className="text-sm text-slate-600 font-medium">
-                Verified Auto Service
-              </div>
-            )}
-          </div>
+              <LogOut size={16} />
+              Logout
+            </button>
+          )}
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   );
 };
