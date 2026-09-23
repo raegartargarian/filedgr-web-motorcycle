@@ -1,15 +1,53 @@
 // this is a js file cause tailwind config file (tailwind.config.js) only supports js
+//
+// Palette sampled from the studio video behind the landing page: near-black
+// cold steel (hue 190-210), a white-cyan neon ring for highlights, and a faint
+// green on the bike's trellis frame that we reserve for "verified" states.
 export const COLORS = {
   inherit: "inherit",
   transparent: "transparent",
   current: "currentColor",
   white: "#FFF",
   black: "#000",
+
+  /** Page backgrounds: the deepest shadows in the footage. */
+  abyss: {
+    900: "#0B141A",
+    950: "#070D12",
+  },
+  /** Surfaces, borders and muted text: the lit steel bodywork. */
+  steel: {
+    300: "#8FA6B0",
+    400: "#607E89",
+    500: "#305060",
+    600: "#253C43",
+    700: "#182838",
+    800: "#102028",
+  },
+  /** Body text: the haze around the lamp. */
+  mist: {
+    100: "#C8D8E0",
+    200: "#A1BCC5",
+  },
+  /** Headings and the ring core. */
+  glow: {
+    50: "#E8F0F8",
+  },
+  /** Primary accent: the neon ring. */
+  neon: {
+    300: "#A6E3F2",
+    400: "#7FD3E8",
+    500: "#4FBFDC",
+  },
+  /** Verified / success only: the trellis frame green. */
+  trellis: {
+    400: "#3DDC84",
+    900: "#104028",
+  },
+
   gray: {
     50: "#FAFAFA",
     100: "#f5f5f5",
-    125: "#D9D9D9",
-    150: "#27272a",
     200: "#EEEEEE",
     300: "#E0E0E0",
     400: "#BDBDBD",
@@ -17,10 +55,8 @@ export const COLORS = {
     600: "#757575",
     700: "#616161",
     800: "#424242",
-    850: "#1b1b1e",
     900: "#212121",
     950: "#0B0B0B",
-    960: "#1E1E1E",
   },
   red: {
     50: "#FFEBEE",
@@ -34,45 +70,6 @@ export const COLORS = {
     800: "#C62828",
     900: "#B71C1C",
   },
-  blue: {
-    50: "#E3F2FD",
-    100: "#BBDEFB",
-    200: "#90CAF9",
-    300: "#64B5F6",
-    400: "#42A5F5",
-    500: "#2196F3",
-    600: "#1E88E5",
-    700: "#1976D2",
-    800: "#1565C0",
-    900: "#0D47A1",
-  },
-  // Complete green palette for 3rdstage branding
-  green: {
-    50: "#F0FDF4",
-    100: "#DCFCE7",
-    200: "#BBF7D0",
-    300: "#86EFAC",
-    400: "#4ADE80",
-    500: "#22C55E",
-    600: "#16A34A",
-    700: "#15803D",
-    800: "#166534",
-    900: "#14532D",
-    950: "#052E16",
-  },
-  // Financial-themed colors
-  emerald: {
-    50: "#ECFDF5",
-    100: "#D1FAE5",
-    200: "#A7F3D0",
-    300: "#6EE7B7",
-    400: "#34D399",
-    500: "#10B981",
-    600: "#059669",
-    700: "#047857",
-    800: "#065F46",
-    900: "#064E3B",
-  },
   gold: {
     50: "#FFFBEB",
     100: "#FEF3C7",
@@ -85,110 +82,40 @@ export const COLORS = {
     800: "#92400E",
     900: "#78350F",
   },
-  slate: {
-    50: "#F8FAFC",
-    100: "#F1F5F9",
-    200: "#E2E8F0",
-    300: "#CBD5E1",
-    400: "#94A3B8",
-    500: "#64748B",
-    600: "#475569",
-    700: "#334155",
-    800: "#1E293B",
-    900: "#0F172A",
-    950: "#020617",
-  },
+
+  // Semantic sets consumed by _colors.scss. The app is dark-only, so both
+  // keys resolve to the same video palette.
   light: {
-    background: "#FFFFFF",
-    divider: "#E5E7EB",
-    card: {
-      header: "#FAFAFA",
-      body: "#FFF",
-    },
-    primary: {
-      light: "#DCFCE7",
-      main: "#16A34A",
-      dark: "#15803D",
-    },
-    secondary: {
-      light: "#F1F5F9",
-      main: "#64748B",
-      dark: "#334155",
-    },
+    background: "#070D12",
+    divider: "#253C43",
+    card: { header: "#182838", body: "#102028" },
+    primary: { light: "#A6E3F2", main: "#7FD3E8", dark: "#4FBFDC" },
+    secondary: { light: "#8FA6B0", main: "#607E89", dark: "#305060" },
     info: {
-      light: "#DBEAFE",
-      main: "#3B82F6",
-      dark: "#1D4ED8",
-      shade30: "#93C5FD",
-      shade900: "#1E3A8A",
+      light: "#A6E3F2",
+      main: "#7FD3E8",
+      dark: "#4FBFDC",
+      shade30: "#A6E3F2",
+      shade900: "#102028",
     },
-    success: {
-      light: "#DCFCE7",
-      main: "#16A34A",
-      dark: "#15803D",
-    },
-    warning: {
-      light: "#FEF3C7",
-      main: "#F59E0B",
-      dark: "#D97706",
-    },
-    error: {
-      light: "#FEE2E2",
-      main: "#EF4444",
-      dark: "#DC2626",
-    },
-    other: {
-      outlineBordered: "#E5E7EB",
-    },
+    success: { light: "#3DDC84", main: "#3DDC84", dark: "#104028" },
+    warning: { light: "#FCD34D", main: "#FBBF24", dark: "#D97706" },
+    error: { light: "#EF5350", main: "#F44336", dark: "#D32F2F" },
+    other: { outlineBordered: "#253C43" },
   },
   dark: {
-    background: "#0F172A",
-    divider: "#334155",
-    card: {
-      header: "#1E293B",
-      body: "#0F172A",
-    },
-    action: {
-      active: "#F8FAFC",
-      disabled: "#64748B",
-      selected: "#334155",
-    },
-    text: {
-      disabled: "#94A3B8",
-    },
-    primary: {
-      light: "#86EFAC",
-      main: "#22C55E",
-      dark: "#16A34A",
-    },
-    secondary: {
-      light: "#CBD5E1",
-      main: "#94A3B8",
-      dark: "#64748B",
-    },
-    info: {
-      light: "#93C5FD",
-      main: "#3B82F6",
-      dark: "#1D4ED8",
-    },
-    success: {
-      light: "#86EFAC",
-      main: "#22C55E",
-      dark: "#16A34A",
-    },
-    warning: {
-      light: "#FCD34D",
-      main: "#F59E0B",
-      dark: "#D97706",
-    },
-    error: {
-      light: "#F87171",
-      main: "#EF4444",
-      dark: "#DC2626",
-    },
-    other: {
-      outlineBordered: "#334155",
-    },
+    background: "#070D12",
+    divider: "#253C43",
+    card: { header: "#182838", body: "#102028" },
+    action: { active: "#E8F0F8", disabled: "#607E89", selected: "#182838" },
+    text: { disabled: "#607E89" },
+    primary: { light: "#A6E3F2", main: "#7FD3E8", dark: "#4FBFDC" },
+    secondary: { light: "#8FA6B0", main: "#607E89", dark: "#305060" },
+    info: { light: "#A6E3F2", main: "#7FD3E8", dark: "#4FBFDC" },
+    success: { light: "#3DDC84", main: "#3DDC84", dark: "#104028" },
+    warning: { light: "#FCD34D", main: "#FBBF24", dark: "#D97706" },
+    error: { light: "#EF5350", main: "#F44336", dark: "#D32F2F" },
+    other: { outlineBordered: "#253C43" },
   },
 };
 
@@ -206,11 +133,14 @@ export const BORDER_RADIUS = {
 };
 
 export const BOX_SHADOW = {
-  none: "none", // elevation-0
-  sm: "rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px 0px, rgb(0 0 0 / 12%) 0px 1px 3px 0px", // elevation-1
-  DEFAULT:
-    "rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px", // elevation-2
-  lg: "rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px, rgb(0 0 0 / 12%) 0px 1px 8px 0px", // elevation-3
+  none: "none",
+  sm: "0 1px 2px rgb(0 0 0 / 40%)",
+  DEFAULT: "0 4px 12px rgb(0 0 0 / 45%)",
+  lg: "0 12px 32px rgb(0 0 0 / 55%)",
+  /** Neon ring glow for primary actions. */
+  glow: "0 0 0 1px rgb(127 211 232 / 35%), 0 0 24px rgb(127 211 232 / 30%)",
+  "glow-lg":
+    "0 0 0 1px rgb(127 211 232 / 45%), 0 0 48px rgb(127 211 232 / 40%)",
 };
 
 export const BREAKPOINTS = {
@@ -218,32 +148,4 @@ export const BREAKPOINTS = {
   md: "900px",
   lg: "1200px",
   xl: "1536px",
-};
-
-// Add font weight configuration
-export const FONT_WEIGHT = {
-  normal: "400",
-  medium: "500",
-  bold: "700",
-};
-
-// Add font size configuration
-export const FONT_SIZE = {
-  xs: "0.75rem", // 12px
-  sm: "0.875rem", // 14px
-  base: "1rem", // 16px
-  lg: "1.125rem", // 18px
-  xl: "1.25rem", // 20px
-  "2xl": "1.5rem", // 24px
-  "3xl": "1.875rem", // 30px
-  "4xl": "2.25rem", // 36px
-};
-
-// Add line height configuration
-export const LINE_HEIGHT = {
-  none: "1",
-  tight: "1.25",
-  normal: "1.5",
-  relaxed: "1.75",
-  loose: "2",
 };

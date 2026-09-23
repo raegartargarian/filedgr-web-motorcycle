@@ -109,20 +109,20 @@ const StreamDetail = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="max-w-4xl mx-auto py-8 px-4">
         {/* Stream header */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+        <div className="u-card p-6 mb-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
-              <Layers className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 u-tile rounded-xl flex-shrink-0">
+              <Layers className="w-6 h-6 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900 truncate">
+              <h1 className="text-xl md:text-2xl truncate">
                 {stream ? formatStreamName(stream) : "Service Stream"}
               </h1>
               {stream?.description && (
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {stream.description}
                 </p>
               )}
@@ -135,19 +135,19 @@ const StreamDetail = () => {
                 {stream?.ledger && (
                   <Badge
                     variant="secondary"
-                    className="bg-gray-100 text-gray-600 border-gray-200"
+                    className="bg-steel-700 text-mist-200 border-border"
                   >
                     {ledgerName(stream.ledger) || stream.ledger}
                   </Badge>
                 )}
                 {stream?.created_at && (
-                  <span className="flex items-center gap-1.5 text-sm text-gray-400">
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <Calendar className="w-3.5 h-3.5" />
                     Created {formatDate(stream.created_at)}
                   </span>
                 )}
                 {totalRecords != null && (
-                  <span className="flex items-center gap-1.5 text-sm text-gray-400">
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <FileText className="w-3.5 h-3.5" />
                     {totalRecords} record{totalRecords !== 1 ? "s" : ""}
                   </span>
@@ -158,20 +158,20 @@ const StreamDetail = () => {
 
           {(stream?.tx_hash || stream?.asset_code) && (
             <>
-              <Separator className="my-5 bg-gray-100" />
+              <Separator className="my-5" />
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                   {stream?.tx_hash && (
                     <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-green-600" />
-                      <span className="text-sm text-green-700 font-medium">
+                      <ShieldCheck className="w-4 h-4 text-trellis-400" />
+                      <span className="text-sm text-trellis-400 font-medium">
                         Verified on blockchain
                       </span>
                       <CopyableHash value={stream.tx_hash} />
                     </div>
                   )}
                   {stream?.asset_code && (
-                    <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <span>Stream:</span>
                       <CopyableHash value={stream.asset_code} />
                     </div>
@@ -184,7 +184,7 @@ const StreamDetail = () => {
                     onClick={() =>
                       viewTXInExplorer(stream.tx_hash!, stream.ledger)
                     }
-                    className="border-gray-200 text-gray-600 hover:bg-gray-50 w-fit"
+                    className="w-fit"
                   >
                     <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
                     Explorer
@@ -201,17 +201,15 @@ const StreamDetail = () => {
             {Array.from({ length: 6 }).map((_, i) => (
               <Skeleton
                 key={i}
-                className="h-16 w-full bg-gray-100 rounded-lg"
+                className="h-16 w-full bg-steel-700 rounded-lg"
               />
             ))}
           </div>
         ) : attachments.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
-            <Layers className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-            <h3 className="text-base font-semibold text-gray-900 mb-1">
-              No service records yet
-            </h3>
-            <p className="text-sm text-gray-500">
+          <div className="u-card p-12 text-center">
+            <Layers className="w-10 h-10 text-steel-500 mx-auto mb-3" />
+            <h3 className="text-base mb-1">No service records yet</h3>
+            <p className="text-sm text-muted-foreground">
               Records will appear here once the dealership uploads
               documentation.
             </p>

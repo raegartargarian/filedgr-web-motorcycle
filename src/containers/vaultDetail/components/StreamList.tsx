@@ -73,7 +73,7 @@ const StreamList: React.FC<StreamListProps> = ({ vaultId, streams }) => {
       <div className="space-y-4">
         {Array.from({ length: Math.min(streams.length || 3, 4) }).map(
           (_, i) => (
-            <Skeleton key={i} className="h-44 w-full bg-gray-100 rounded-xl" />
+            <Skeleton key={i} className="h-44 w-full bg-steel-700 rounded-xl" />
           ),
         )}
       </div>
@@ -93,20 +93,15 @@ const StreamList: React.FC<StreamListProps> = ({ vaultId, streams }) => {
         const hasMore = total > previews.length;
 
         return (
-          <div
-            key={stream.id}
-            className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden"
-          >
+          <div key={stream.id} className="u-card overflow-hidden">
             {/* Header */}
-            <div className="flex items-center gap-3 p-4 border-b border-gray-100">
-              <div className="w-9 h-9 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
-                <Layers className="w-4 h-4 text-blue-600" />
+            <div className="flex items-center gap-3 p-4 border-b border-border">
+              <div className="w-9 h-9 u-tile flex-shrink-0">
+                <Layers className="w-4 h-4 text-primary" />
               </div>
               <div className="min-w-0 flex-1">
-                <h3 className="font-semibold text-gray-900 truncate text-sm">
-                  {formatStreamName(stream)}
-                </h3>
-                <span className="text-xs text-gray-400">
+                <h3 className="truncate text-sm">{formatStreamName(stream)}</h3>
+                <span className="text-xs text-muted-foreground">
                   {total} record{total !== 1 ? "s" : ""}
                 </span>
               </div>
@@ -120,7 +115,7 @@ const StreamList: React.FC<StreamListProps> = ({ vaultId, streams }) => {
                   </Badge>
                 )}
                 {stream.tx_hash && (
-                  <ShieldCheck className="w-4 h-4 text-green-600" />
+                  <ShieldCheck className="w-4 h-4 text-trellis-400" />
                 )}
               </div>
             </div>
@@ -128,12 +123,12 @@ const StreamList: React.FC<StreamListProps> = ({ vaultId, streams }) => {
             {/* Preview records */}
             <div className="p-4">
               {stream.description && (
-                <p className="text-xs text-gray-400 mb-3">
+                <p className="text-xs text-muted-foreground mb-3">
                   {stream.description}
                 </p>
               )}
               {previews.length === 0 ? (
-                <p className="text-sm text-gray-400 py-2">
+                <p className="text-sm text-muted-foreground py-2">
                   No service records uploaded yet
                 </p>
               ) : (
@@ -152,7 +147,7 @@ const StreamList: React.FC<StreamListProps> = ({ vaultId, streams }) => {
                   onClick={() =>
                     navigate(streamDetailPath(vaultId, stream.asset_code!))
                   }
-                  className="mt-3 w-full flex items-center justify-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg py-2 transition-colors"
+                  className="mt-3 w-full flex items-center justify-center gap-1.5 text-sm font-medium text-primary hover:text-neon-300 hover:bg-primary/10 rounded-lg py-2 transition-colors"
                 >
                   View all {total} records
                   <ArrowRight className="w-4 h-4" />

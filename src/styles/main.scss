@@ -13,74 +13,47 @@
   text-shadow: 0 1px 4px rgba(black, 0.675);
 }
 
-.bg-grad{
-  @apply bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900;
+// Web3Auth modal: let the hero video show through.
+.w3a-modal {
+  background: rgba(7, 13, 18, 0.82) !important;
+  backdrop-filter: blur(12px);
 }
 
-.w3a-modal{
-  background: rgba(0, 0, 0, 0.99);
-}
-
-.w3a-header__button{
+.w3a-header__button {
   display: none !important;
 }
 
 @layer base {
-  :root {
-    /* Light mode - better contrast */
-    --background: 0 0% 100%;
-    --foreground: 210 40% 8%;
-    --card: 0 0% 100%;
-    --card-foreground: 210 40% 8%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 40% 8%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 210 40% 8%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 210 40% 8%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 142 76% 36%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-  }
-  
+  // shadcn semantic tokens. Dark-only: the values are the video palette in
+  // tailwind-theme.js expressed as HSL. `.dark` mirrors :root so the
+  // `darkMode: class` config stays valid without a toggle.
+  :root,
   .dark {
-    /* Dark mode - better contrast */
-    --background: 220 27% 4%;
-    --foreground: 210 40% 98%;
-    --card: 220 27% 4%;
-    --card-foreground: 210 40% 98%;
-    --popover: 220 27% 4%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 215 28% 17%;
-    --muted-foreground: 217 11% 65%;
-    --accent: 215 28% 17%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 142 76% 36%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --background: 207 44% 5%; // abyss.950
+    --foreground: 200 28% 83%; // mist.100
+    --card: 200 43% 11%; // steel.800
+    --card-foreground: 200 28% 83%;
+    --popover: 210 40% 16%; // steel.700
+    --popover-foreground: 200 28% 83%;
+    --primary: 192 70% 70%; // neon.400
+    --primary-foreground: 207 44% 5%;
+    --secondary: 210 40% 16%; // steel.700
+    --secondary-foreground: 210 53% 94%; // glow.50
+    --muted: 210 40% 16%;
+    --muted-foreground: 196 18% 46%; // steel.400
+    --accent: 210 40% 16%;
+    --accent-foreground: 210 53% 94%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 53% 94%;
+    --border: 194 29% 20%; // steel.600
+    --input: 194 29% 20%;
+    --ring: 192 75% 80%; // neon.300
+    --chart-1: 192 70% 70%;
+    --chart-2: 150 68% 55%;
+    --chart-3: 43 96% 56%;
+    --chart-4: 200 33% 28%;
+    --chart-5: 0 84% 60%;
+    --radius: 0.75rem;
   }
 }
 
@@ -88,100 +61,18 @@
   * {
     @apply border-border;
   }
+  html {
+    @apply bg-abyss-950;
+    color-scheme: dark;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+  ::selection {
+    @apply bg-neon-400/30 text-glow-50;
   }
 }
 
-@layer utilities {
-  /* 3rdstage brand utilities with proper contrast */
-  .u-card {
-    @apply bg-white text-slate-900 shadow-sm p-7 rounded-xl border border-slate-200;
-  }
-  
-  .u-card-dark {
-    @apply bg-slate-900 text-white shadow-sm p-7 rounded-xl border border-slate-700;
-  }
-  
-  .u-page {
-    @apply w-full my-5;
-    background-image: var(--bg-image);
-  }
-
-  .u-bg {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  }
-  
-  .u-gradient-txt {
-    display: block;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    background-image: linear-gradient(91deg, #16a34a 10.57%, #059669 94.89%);
-    background-clip: text;
-  }
-  
-  /* Financial theme colors with proper contrast */
-  .nav-positive {
-    @apply text-green-700;
-  }
-  
-  .nav-negative {
-    @apply text-red-600;
-  }
-  
-  .nav-neutral {
-    @apply text-slate-600;
-  }
-  
-  /* Button variants with proper contrast */
-  .btn-primary {
-    @apply bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors;
-  }
-  
-  .btn-secondary {
-    @apply bg-slate-200 hover:bg-slate-300 text-slate-900 font-semibold px-6 py-3 rounded-lg transition-colors;
-  }
-  
-  .btn-outline {
-    @apply border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white font-semibold px-6 py-3 rounded-lg transition-colors;
-  }
-  
-  /* Text color utilities with proper contrast */
-  .text-on-light {
-    @apply text-slate-900;
-  }
-  
-  .text-on-dark {
-    @apply text-white;
-  }
-  
-  .text-muted-light {
-    @apply text-slate-600;
-  }
-  
-  .text-muted-dark {
-    @apply text-slate-400;
-  }
-  
-  /* Background utilities */
-  .bg-surface-light {
-    @apply bg-white;
-  }
-  
-  .bg-surface-dark {
-    @apply bg-slate-900;
-  }
-  
-  .bg-surface-muted-light {
-    @apply bg-slate-50;
-  }
-  
-  .bg-surface-muted-dark {
-    @apply bg-slate-800;
-  }
-}
-
-.leaflet-control-attribution{
+.leaflet-control-attribution {
   display: none !important;
 }

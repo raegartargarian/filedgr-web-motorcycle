@@ -59,12 +59,10 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
 
   if (files.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
-        <File className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          No files available
-        </h3>
-        <p className="text-gray-500 max-w-md mx-auto">
+      <div className="u-card p-12 text-center">
+        <File className="w-12 h-12 text-steel-500 mx-auto mb-4" />
+        <h3 className="text-lg mb-2">No files available</h3>
+        <p className="text-muted-foreground max-w-md mx-auto">
           This service record does not contain any viewable files.
         </p>
       </div>
@@ -84,35 +82,35 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
 
           return (
             <motion.div key={file.id ?? index} variants={staggerItem}>
-              <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden">
+              <Card className="overflow-hidden">
                 <CardContent className="p-0">
                   {/* File header */}
-                  <div className="flex items-center justify-between gap-3 px-5 py-3 border-b border-gray-100">
+                  <div className="flex items-center justify-between gap-3 px-5 py-3 border-b border-border">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 u-tile flex-shrink-0">
                         {isImage(file) ? (
-                          <ImageIcon className="w-4 h-4 text-blue-500" />
+                          <ImageIcon className="w-4 h-4 text-primary" />
                         ) : isPdf(file) ? (
-                          <FileText className="w-4 h-4 text-red-500" />
+                          <FileText className="w-4 h-4 text-red-300" />
                         ) : (
-                          <File className="w-4 h-4 text-gray-400" />
+                          <File className="w-4 h-4 text-muted-foreground" />
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
+                        <p className="text-sm font-medium text-foreground truncate">
                           {file.filename || "Unnamed file"}
                         </p>
                         <div className="flex items-center gap-2 mt-0.5">
                           {file.mimetype && (
                             <Badge
                               variant="secondary"
-                              className="bg-gray-100 text-gray-500 border-gray-200 text-[10px] px-1.5 py-0"
+                              className="bg-steel-700 text-mist-200 border-border text-[10px] px-1.5 py-0"
                             >
                               {file.mimetype}
                             </Badge>
                           )}
                           {file.size != null && (
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-muted-foreground">
                               {formatFileSize(file.size)}
                             </span>
                           )}
@@ -124,7 +122,7 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-700 text-xs font-medium flex-shrink-0"
+                        className="inline-flex items-center gap-1.5 text-primary hover:text-neon-300 text-xs font-medium flex-shrink-0"
                       >
                         <Download className="w-3.5 h-3.5" />
                         Download
@@ -136,7 +134,7 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
                   {isImage(file) && url && (
                     <motion.div
                       whileHover={{ scale: 1.005 }}
-                      className="cursor-pointer bg-gray-50 flex items-center justify-center p-4"
+                      className="cursor-pointer bg-abyss-900/60 flex items-center justify-center p-4"
                       onClick={() => setSelectedImage(url)}
                     >
                       <img
@@ -148,8 +146,8 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
                   )}
 
                   {isPdf(file) && url && (
-                    <div className="bg-gray-50 flex items-center justify-center p-4">
-                      <div className="w-full max-w-[280px] aspect-[3/4] rounded-lg border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                    <div className="bg-abyss-900/60 flex items-center justify-center p-4">
+                      <div className="w-full max-w-[280px] aspect-[3/4] rounded-lg border border-border shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                         <FileThumbnailButton
                           source={toSource(file)}
                           resolver={resolver}
@@ -160,8 +158,8 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
                   )}
 
                   {/* File metadata */}
-                  <div className="px-5 py-3 bg-gray-50/50 border-t border-gray-100">
-                    <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-400">
+                  <div className="px-5 py-3 bg-abyss-900/40 border-t border-border">
+                    <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
                       {file.hash && (
                         <span className="flex items-center gap-1.5">
                           Hash:
@@ -177,7 +175,7 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
                       {file.status && (
                         <span>
                           Status:{" "}
-                          <span className="text-gray-500">
+                          <span className="text-muted-foreground">
                             {getStatusConfig("attachment", file.status).label}
                           </span>
                         </span>
@@ -242,7 +240,7 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="relative w-full max-w-5xl h-[90vh] bg-white rounded-xl overflow-hidden"
+              className="relative w-full max-w-5xl h-[90vh] bg-steel-800 rounded-xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <button

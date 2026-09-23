@@ -50,14 +50,14 @@ const VaultDetail = () => {
 
   if (isLoading || !vault) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <div className="max-w-4xl mx-auto py-8 px-4">
-          <Skeleton className="h-8 w-32 mb-8 bg-gray-200" />
-          <Skeleton className="h-48 w-full mb-8 bg-gray-200 rounded-xl" />
-          <Skeleton className="h-6 w-48 mb-4 bg-gray-200" />
-          <Skeleton className="h-16 w-full mb-2 bg-gray-100 rounded-lg" />
-          <Skeleton className="h-16 w-full mb-2 bg-gray-100 rounded-lg" />
-          <Skeleton className="h-16 w-full bg-gray-100 rounded-lg" />
+          <Skeleton className="h-8 w-32 mb-8 bg-steel-700" />
+          <Skeleton className="h-48 w-full mb-8 bg-steel-700 rounded-xl" />
+          <Skeleton className="h-6 w-48 mb-4 bg-steel-700" />
+          <Skeleton className="h-16 w-full mb-2 bg-steel-700 rounded-lg" />
+          <Skeleton className="h-16 w-full mb-2 bg-steel-700 rounded-lg" />
+          <Skeleton className="h-16 w-full bg-steel-700 rounded-lg" />
         </div>
       </div>
     );
@@ -68,24 +68,22 @@ const VaultDetail = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="max-w-4xl mx-auto py-8 px-4">
         {/* Motorcycle Overview Card */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 md:p-8 mb-8">
+        <div className="u-card p-6 md:p-8 mb-8">
           <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+            <div className="w-14 h-14 u-tile rounded-xl flex-shrink-0 overflow-hidden">
               <VaultImage
                 vault={vault}
                 imgClassName="w-full h-full object-cover"
-                iconClassName="w-7 h-7 text-blue-600"
+                iconClassName="w-7 h-7 text-primary"
               />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-                {vault.name}
-              </h1>
+              <h1 className="text-2xl md:text-3xl">{vault.name}</h1>
               {vault.description && (
-                <p className="text-gray-500 mt-1 text-base">
+                <p className="text-muted-foreground mt-1 text-base">
                   {vault.description}
                 </p>
               )}
@@ -98,19 +96,19 @@ const VaultDetail = () => {
                 {vault.ledger && (
                   <Badge
                     variant="secondary"
-                    className="bg-gray-100 text-gray-600 border-gray-200"
+                    className="bg-steel-700 text-mist-200 border-border"
                   >
                     {ledgerName(vault.ledger) || vault.ledger}
                   </Badge>
                 )}
                 {vault.created_at && (
-                  <span className="flex items-center gap-1.5 text-sm text-gray-400">
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <Calendar className="w-3.5 h-3.5" />
                     Registered {formatDate(vault.created_at)}
                   </span>
                 )}
                 {vault.streams && (
-                  <span className="flex items-center gap-1.5 text-sm text-gray-400">
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <Layers className="w-3.5 h-3.5" />
                     {vault.streams.length} stream
                     {vault.streams.length !== 1 ? "s" : ""}
@@ -120,13 +118,13 @@ const VaultDetail = () => {
             </div>
           </div>
 
-          <Separator className="my-5 bg-gray-100" />
+          <Separator className="my-5" />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             {/* Blockchain verification */}
             {vault.tx_hash ? (
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-green-600" />
-                <span className="text-sm text-green-700 font-medium">
+                <ShieldCheck className="w-4 h-4 text-trellis-400" />
+                <span className="text-sm text-trellis-400 font-medium">
                   Verified on blockchain
                 </span>
                 <CopyableHash value={vault.tx_hash} />
@@ -140,7 +138,7 @@ const VaultDetail = () => {
                 size="sm"
                 onClick={handleDownloadProof}
                 disabled={isGeneratingPdf}
-                className="border-blue-200 text-blue-600 hover:bg-blue-50 w-fit"
+                className="border-primary/40 text-primary hover:bg-primary/10 hover:text-primary w-fit"
               >
                 {isGeneratingPdf ? (
                   <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
@@ -154,7 +152,7 @@ const VaultDetail = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => viewTXInExplorer(vault.tx_hash!, vault.ledger)}
-                  className="border-gray-200 text-gray-600 hover:bg-gray-50 w-fit"
+                  className="w-fit"
                 >
                   <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
                   Explorer
@@ -166,19 +164,15 @@ const VaultDetail = () => {
 
         {/* Service History */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">
-            Service History
-          </h2>
+          <h2 className="text-lg mb-6">Service History</h2>
 
           {vault.streams && vault.streams.length > 0 ? (
             <StreamList vaultId={vault.id} streams={vault.streams} />
           ) : (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
-              <Layers className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <h3 className="text-base font-semibold text-gray-900 mb-1">
-                No service streams yet
-              </h3>
-              <p className="text-sm text-gray-500">
+            <div className="u-card p-12 text-center">
+              <Layers className="w-10 h-10 text-steel-500 mx-auto mb-3" />
+              <h3 className="text-base mb-1">No service streams yet</h3>
+              <p className="text-sm text-muted-foreground">
                 Service records will appear here once the dealership uploads
                 repair documentation.
               </p>

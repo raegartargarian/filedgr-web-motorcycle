@@ -8,8 +8,7 @@
   }
 
   body {
-    @apply text-gray-900 dark:text-white;
-    @apply bg-light-background dark:bg-dark-background;
+    @apply bg-background text-foreground;
     @apply m-0 p-0;
   }
 
@@ -23,7 +22,7 @@
   }
 
   hr {
-    @apply border-t w-full border-gray-300 dark:border-gray-600;
+    @apply border-t w-full border-border;
   }
 
   strong {

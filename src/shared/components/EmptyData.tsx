@@ -1,4 +1,4 @@
-import { Car } from "lucide-react";
+import { Bike } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface NoActivityProps {
@@ -7,14 +7,18 @@ interface NoActivityProps {
   icon?: LucideIcon;
 }
 
-const NoActivity = ({ title, description, icon: Icon = Car }: NoActivityProps) => {
+const NoActivity = ({
+  title,
+  description,
+  icon: Icon = Bike,
+}: NoActivityProps) => {
   return (
-    <div className="flex flex-col items-center justify-center h-full p-8 max-w-md">
-      <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center mb-4">
-        <Icon className="w-7 h-7 text-gray-400" />
+    <div className="flex h-full max-w-md flex-col items-center justify-center p-8">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-border bg-steel-800">
+        <Icon className="h-7 w-7 text-muted-foreground" />
       </div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-2">{title}</h2>
-      <p className="text-center text-gray-500">{description}</p>
+      <h2 className="mb-2 text-xl">{title}</h2>
+      <p className="text-center text-muted-foreground">{description}</p>
     </div>
   );
 };

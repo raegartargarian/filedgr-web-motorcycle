@@ -12,7 +12,7 @@ import { appRoutes } from "./shared/constants/routes";
 
 function App() {
   useEffect(() => {
-    document.documentElement.classList.add("bg-gray-50");
+    document.documentElement.classList.add("dark");
   }, []);
   return (
     <HashRouter>

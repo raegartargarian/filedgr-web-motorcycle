@@ -24,7 +24,7 @@ export const FileThumbnailButton = ({
   <button
     type="button"
     onClick={onOpen}
-    className={`group relative block w-full h-full overflow-hidden bg-white cursor-zoom-in ${className}`}
+    className={`group relative block w-full h-full overflow-hidden bg-steel-800 cursor-zoom-in ${className}`}
     title={`Open ${source.filename}`}
   >
     <FileThumbnail

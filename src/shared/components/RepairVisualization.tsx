@@ -6,8 +6,8 @@ import { ProcessedRepairData } from "@/shared/utils/zipHandler";
 import { FilePreview } from "@filedgr/web-core/preview";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  Bike,
   Calendar,
-  Car,
   Clock,
   DollarSign,
   Download,
@@ -57,7 +57,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
   ) {
     return (
       <div className="text-center p-8">
-        <p className="text-gray-600">No repair data available</p>
+        <p className="text-mist-200">No repair data available</p>
       </div>
     );
   }
@@ -104,7 +104,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
         >
           {[
             {
-              icon: Car,
+              icon: Bike,
               label: "Motorcycle",
               value:
                 [
@@ -114,17 +114,17 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                 ]
                   .filter(Boolean)
                   .join(" ") || "N/A",
-              color: "text-blue-600",
-              bg: "bg-blue-50",
-              border: "border-blue-100",
+              color: "text-primary",
+              bg: "bg-primary/10",
+              border: "border-primary/20",
             },
             {
               icon: Wrench,
               label: "Service Type",
               value: repairSession.repairInfo.type || "General Service",
-              color: "text-green-600",
-              bg: "bg-green-50",
-              border: "border-green-100",
+              color: "text-trellis-400",
+              bg: "bg-trellis-900/40",
+              border: "border-trellis-400/30",
             },
             {
               icon: DollarSign,
@@ -132,9 +132,9 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               value: repairSession.repairInfo.cost
                 ? `$${repairSession.repairInfo.cost.toFixed(2)}`
                 : "N/A",
-              color: "text-emerald-700",
-              bg: "bg-emerald-50",
-              border: "border-emerald-100",
+              color: "text-gold-300",
+              bg: "bg-gold-400/10",
+              border: "border-gold-400/30",
             },
             {
               icon: Clock,
@@ -142,13 +142,13 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               value: repairSession.repairInfo.laborHours
                 ? `${repairSession.repairInfo.laborHours}h`
                 : "N/A",
-              color: "text-orange-600",
-              bg: "bg-orange-50",
-              border: "border-orange-100",
+              color: "text-mist-100",
+              bg: "bg-steel-700",
+              border: "border-steel-500",
             },
           ].map((card) => (
             <motion.div key={card.label} variants={staggerItem}>
-              <Card className="bg-white border border-gray-200 shadow-sm">
+              <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <div
@@ -157,10 +157,10 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                       <card.icon className={`w-4 h-4 ${card.color}`} />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">
+                      <div className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">
                         {card.label}
                       </div>
-                      <div className="text-sm font-bold text-gray-900 truncate">
+                      <div className="text-sm font-bold text-foreground truncate">
                         {card.value}
                       </div>
                     </div>
@@ -176,13 +176,13 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
       <motion.div {...fadeIn} transition={{ duration: 0.4, delay: 0.2 }}>
         <Tabs defaultValue={defaultTab} className="w-full">
           <TabsList
-            className={`grid w-full ${gridCols} bg-gray-100 gap-1 p-1 rounded-xl`}
+            className={`grid w-full ${gridCols} bg-steel-800 border border-border gap-1 p-1 rounded-xl`}
           >
             {availableTabs.map((tab) => (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="flex items-center gap-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-xs sm:text-sm"
+                className="flex items-center gap-1.5 rounded-lg data-[state=active]:bg-steel-700 data-[state=active]:text-glow-50 text-xs sm:text-sm"
               >
                 <tab.icon className="w-3.5 h-3.5" />
                 <span>{tab.label}</span>
@@ -201,10 +201,10 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               >
                 {data.imageMatches.map((match, index) => (
                   <motion.div key={index} variants={staggerItem}>
-                    <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden">
+                    <Card className="overflow-hidden">
                       <CardHeader className="pb-3 pt-4 px-5">
-                        <CardTitle className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                          <span className="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">
+                        <CardTitle className="text-sm flex items-center gap-2">
+                          <span className="w-6 h-6 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xs font-bold">
                             {index + 1}
                           </span>
                           {match.category.replace(/_/g, " ")}
@@ -215,7 +215,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                           {/* Before */}
                           <div>
                             <div className="flex items-center gap-1.5 mb-2">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-red-50 text-red-600 text-[11px] font-semibold uppercase tracking-wide border border-red-100">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md status-error border text-[11px] font-semibold uppercase tracking-wide">
                                 Before
                               </span>
                             </div>
@@ -228,7 +228,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                                   stiffness: 300,
                                   damping: 20,
                                 }}
-                                className="relative cursor-pointer rounded-xl overflow-hidden border border-gray-200 bg-gray-50"
+                                className="relative cursor-pointer rounded-xl overflow-hidden border border-border bg-abyss-900/60"
                                 onClick={() =>
                                   setSelectedImage(match.before!.url!)
                                 }
@@ -238,11 +238,11 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                                   alt={`Before ${match.category}`}
                                   className="w-full aspect-[4/3] object-cover"
                                 />
-                                <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors rounded-xl" />
+                                <div className="absolute inset-0 bg-black/0 hover:bg-neon-400/10 transition-colors rounded-xl" />
                               </motion.div>
                             ) : (
-                              <div className="w-full aspect-[4/3] bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center">
-                                <span className="text-gray-400 text-sm">
+                              <div className="w-full aspect-[4/3] bg-abyss-900/60 border border-border rounded-xl flex items-center justify-center">
+                                <span className="text-muted-foreground text-sm">
                                   No before image
                                 </span>
                               </div>
@@ -252,7 +252,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                           {/* After */}
                           <div>
                             <div className="flex items-center gap-1.5 mb-2">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-green-50 text-green-600 text-[11px] font-semibold uppercase tracking-wide border border-green-100">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md status-success border text-[11px] font-semibold uppercase tracking-wide">
                                 After
                               </span>
                             </div>
@@ -265,7 +265,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                                   stiffness: 300,
                                   damping: 20,
                                 }}
-                                className="relative cursor-pointer rounded-xl overflow-hidden border border-gray-200 bg-gray-50"
+                                className="relative cursor-pointer rounded-xl overflow-hidden border border-border bg-abyss-900/60"
                                 onClick={() =>
                                   setSelectedImage(match.after!.url!)
                                 }
@@ -275,11 +275,11 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                                   alt={`After ${match.category}`}
                                   className="w-full aspect-[4/3] object-cover"
                                 />
-                                <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors rounded-xl" />
+                                <div className="absolute inset-0 bg-black/0 hover:bg-neon-400/10 transition-colors rounded-xl" />
                               </motion.div>
                             ) : (
-                              <div className="w-full aspect-[4/3] bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center">
-                                <span className="text-gray-400 text-sm">
+                              <div className="w-full aspect-[4/3] bg-abyss-900/60 border border-border rounded-xl flex items-center justify-center">
+                                <span className="text-muted-foreground text-sm">
                                   No after image
                                 </span>
                               </div>
@@ -303,10 +303,10 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               className="grid grid-cols-1 lg:grid-cols-2 gap-4"
             >
               <motion.div variants={staggerItem}>
-                <Card className="bg-white border border-gray-200 shadow-sm">
+                <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                      <Car className="w-4 h-4 text-blue-600" />
+                    <CardTitle className="flex items-center gap-2 text-sm">
+                      <Bike className="w-4 h-4 text-primary" />
                       Motorcycle Information
                     </CardTitle>
                   </CardHeader>
@@ -331,19 +331,19 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                         },
                       ].map((item) => (
                         <div key={item.label}>
-                          <label className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+                          <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                             {item.label}
                           </label>
-                          <p className="text-sm text-gray-900 font-medium">
+                          <p className="text-sm text-foreground font-medium">
                             {item.value || "N/A"}
                           </p>
                         </div>
                       ))}
                       <div className="col-span-2">
-                        <label className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+                        <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                           VIN
                         </label>
-                        <p className="text-sm text-gray-900 font-mono">
+                        <p className="text-sm text-foreground font-mono">
                           {repairSession?.vehicleInfo.vin || "N/A"}
                         </p>
                       </div>
@@ -353,10 +353,10 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               </motion.div>
 
               <motion.div variants={staggerItem}>
-                <Card className="bg-white border border-gray-200 shadow-sm">
+                <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                      <Wrench className="w-4 h-4 text-green-600" />
+                    <CardTitle className="flex items-center gap-2 text-sm">
+                      <Wrench className="w-4 h-4 text-trellis-400" />
                       Service Information
                     </CardTitle>
                   </CardHeader>
@@ -374,28 +374,28 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                       },
                     ].map((item) => (
                       <div key={item.label}>
-                        <label className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+                        <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                           {item.label}
                         </label>
-                        <p className="text-sm text-gray-900 flex items-center gap-1.5 font-medium">
-                          <item.icon className="w-3.5 h-3.5 text-gray-400" />
+                        <p className="text-sm text-foreground flex items-center gap-1.5 font-medium">
+                          <item.icon className="w-3.5 h-3.5 text-muted-foreground" />
                           {item.value || "N/A"}
                         </p>
                       </div>
                     ))}
                     <div>
-                      <label className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+                      <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                         Description
                       </label>
-                      <p className="text-sm text-gray-700 leading-relaxed">
+                      <p className="text-sm text-mist-100 leading-relaxed">
                         {repairSession?.repairInfo.description || "N/A"}
                       </p>
                     </div>
                     <div>
-                      <label className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+                      <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                         Warranty
                       </label>
-                      <p className="text-sm text-gray-900 font-medium">
+                      <p className="text-sm text-foreground font-medium">
                         {repairSession?.repairInfo.warranty || "N/A"}
                       </p>
                     </div>
@@ -416,11 +416,11 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               >
                 {data.documents.map((doc, index) => (
                   <motion.div key={index} variants={staggerItem}>
-                    <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden">
+                    <Card className="overflow-hidden">
                       <CardContent className="p-0">
-                        <div className="border-b border-gray-100 px-4 py-3 flex items-center justify-between">
-                          <h4 className="font-medium text-gray-900 text-sm capitalize flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-gray-400" />
+                        <div className="border-b border-border px-4 py-3 flex items-center justify-between">
+                          <h4 className="font-medium text-sm capitalize flex items-center gap-2">
+                            <FileText className="w-4 h-4 text-muted-foreground" />
                             {doc.name}
                           </h4>
                           <div className="flex items-center gap-3">
@@ -434,7 +434,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                                     filename: doc.filename || doc.name,
                                   })
                                 }
-                                className="inline-flex items-center gap-1 text-gray-500 hover:text-gray-700 text-xs font-medium"
+                                className="inline-flex items-center gap-1 text-muted-foreground hover:text-glow-50 text-xs font-medium"
                               >
                                 <Maximize2 className="w-3 h-3" />
                                 Full screen
@@ -443,14 +443,14 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                             <a
                               href={doc.url}
                               download={doc.filename}
-                              className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-xs font-medium"
+                              className="inline-flex items-center gap-1 text-primary hover:text-neon-300 text-xs font-medium"
                             >
                               <Download className="w-3 h-3" />
                               Download
                             </a>
                           </div>
                         </div>
-                        <div className="relative bg-gray-50 h-80">
+                        <div className="relative bg-abyss-900/60 h-80">
                           {doc.url && (
                             <FileThumbnailButton
                               source={{
@@ -485,11 +485,9 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                 initial="initial"
                 animate="animate"
               >
-                <Card className="bg-white border border-gray-200 shadow-sm">
+                <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-semibold text-gray-900">
-                      Parts Used
-                    </CardTitle>
+                    <CardTitle className="text-sm">Parts Used</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
@@ -497,13 +495,13 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                         <motion.div
                           key={index}
                           variants={staggerItem}
-                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors gap-2"
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border border-border rounded-lg hover:bg-steel-700/60 transition-colors gap-2"
                         >
                           <div className="min-w-0">
-                            <h4 className="text-sm font-medium text-gray-900">
+                            <h4 className="text-sm font-medium">
                               {part.partName}
                             </h4>
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 mt-0.5">
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-0.5">
                               {part.partNumber && (
                                 <span className="flex items-center gap-0.5">
                                   <Hash className="w-2.5 h-2.5" />
@@ -519,7 +517,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                             </div>
                           </div>
                           {part.cost != null && (
-                            <div className="text-sm font-bold text-gray-900 flex-shrink-0">
+                            <div className="text-sm font-bold text-foreground flex-shrink-0">
                               ${part.cost.toFixed(2)}
                             </div>
                           )}
@@ -585,20 +583,20 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 26 }}
-              className="relative flex flex-col w-full h-full max-w-6xl bg-white rounded-xl overflow-hidden"
+              className="relative flex flex-col w-full h-full max-w-6xl bg-steel-800 rounded-xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-gray-200 shrink-0">
-                <h3 className="text-sm font-semibold text-gray-900 capitalize flex items-center gap-2 min-w-0">
-                  <FileText className="w-4 h-4 text-gray-400 shrink-0" />
+              <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-border shrink-0">
+                <h3 className="text-sm capitalize flex items-center gap-2 min-w-0">
+                  <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                   <span className="truncate">{selectedPdf.name}</span>
                 </h3>
                 <div className="flex items-center gap-4 shrink-0">
                   <a
                     href={selectedPdf.url}
                     download={selectedPdf.filename}
-                    className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-xs font-medium"
+                    className="inline-flex items-center gap-1 text-primary hover:text-neon-300 text-xs font-medium"
                   >
                     <Download className="w-3.5 h-3.5" />
                     Download
@@ -607,7 +605,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
                     type="button"
                     onClick={() => setSelectedPdf(null)}
                     aria-label="Close"
-                    className="text-gray-400 hover:text-gray-700 transition-colors"
+                    className="text-muted-foreground hover:text-glow-50 transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -615,7 +613,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               </div>
 
               {/* PDF body */}
-              <div className="flex-1 min-h-0 bg-gray-50">
+              <div className="flex-1 min-h-0 bg-abyss-900/60">
                 <FilePreview
                   source={{
                     id: selectedPdf.url,

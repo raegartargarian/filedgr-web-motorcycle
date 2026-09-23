@@ -1,3 +1,4 @@
+import type { FailureInfo } from "@filedgr/web-core/status";
 import type {
   AttachmentFileModel,
   AttachmentModel,
@@ -14,8 +15,12 @@ export interface AttachmentStreamModel {
   status?: string;
 }
 
-/** A service record: web-core's attachment plus the fields this API embeds. */
-export type Attachment = AttachmentModel & {
-  file_count?: number;
-  stream?: AttachmentStreamModel;
-};
+/**
+ * A service record: web-core's attachment plus the fields this API embeds,
+ * including the retry/failure block read by @filedgr/web-core/status.
+ */
+export type Attachment = AttachmentModel &
+  FailureInfo & {
+    file_count?: number;
+    stream?: AttachmentStreamModel;
+  };

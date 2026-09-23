@@ -60,32 +60,32 @@ const ServiceRecordCard: React.FC<ServiceRecordCardProps> = ({
   return (
     <button
       onClick={handleClick}
-      className="w-full text-left bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer group"
+      className="w-full text-left u-card p-4 hover:shadow-md hover:border-neon-400/50 transition-all duration-200 cursor-pointer group"
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
+          <div className="w-9 h-9 u-tile flex-shrink-0">
             {hasZip ? (
-              <Wrench className="w-4 h-4 text-blue-600" />
+              <Wrench className="w-4 h-4 text-primary" />
             ) : categories.includes("image") ? (
-              <ImageIcon className="w-4 h-4 text-blue-600" />
+              <ImageIcon className="w-4 h-4 text-primary" />
             ) : (
-              <FileText className="w-4 h-4 text-blue-600" />
+              <FileText className="w-4 h-4 text-primary" />
             )}
           </div>
           <div className="min-w-0">
-            <p className="font-medium text-gray-900 truncate text-sm">
+            <p className="font-medium text-foreground truncate text-sm">
               {attachment.name || "Service Record"}
             </p>
             <div className="flex flex-wrap items-center gap-2 mt-0.5">
               {attachment.created_at && (
-                <span className="flex items-center gap-1 text-xs text-gray-400">
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Calendar className="w-3 h-3" />
                   {formatDate(attachment.created_at)}
                 </span>
               )}
               {fileTypeSummary && (
-                <span className="flex items-center gap-1 text-xs text-gray-400">
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Package className="w-3 h-3" />
                   {fileTypeSummary}
                 </span>
@@ -102,7 +102,7 @@ const ServiceRecordCard: React.FC<ServiceRecordCardProps> = ({
               {status.label}
             </Badge>
           )}
-          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+          <ArrowRight className="w-4 h-4 text-steel-500 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
         </div>
       </div>
     </button>
