@@ -8,6 +8,7 @@
     "dev:test": "vite --mode test",
     "dev:prod": "vite --mode prod",
     "build": "tsc -b && vite build",
+    "build:dev": "tsc -b && vite build --mode development",
     "preview": "vite preview",
     "format": "prettier  src \"*/**.{js.jsx,ts,tsx,css.md}\" --check --ignore-path .gitignore --write",
     "lint": "eslint src",

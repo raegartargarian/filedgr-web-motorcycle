@@ -2,10 +2,11 @@
 #
 # @filedgr/web-core is a private GitHub Packages dependency: set NODE_AUTH_TOKEN
 # (a token with read:packages) in the Netlify site's environment variables so
-# the repo .npmrc can authenticate the install. The VITE_* build variables come
-# from the committed .env (production mode).
+# the repo .npmrc can authenticate the install. This site is the dev
+# deployment, so it builds in Vite's development mode: the VITE_* variables
+# (API, Web3Auth client id, explorer) come from the committed .env.development.
 [build]
-  command = "npm run build"
+  command = "npm run build:dev"
   publish = "build"
 
 [build.environment]
