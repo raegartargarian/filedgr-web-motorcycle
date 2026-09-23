@@ -41,6 +41,20 @@
       );
   }
 
+  /* Feathers an element's edges into whatever sits behind it. */
+  .u-feather {
+    -webkit-mask-image: radial-gradient(
+      ellipse 62% 60% at 50% 50%,
+      #000 50%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 62% 60% at 50% 50%,
+      #000 50%,
+      transparent 100%
+    );
+  }
+
   /* Buttons */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-glow transition-all hover:bg-neon-300 hover:shadow-glow-lg;
