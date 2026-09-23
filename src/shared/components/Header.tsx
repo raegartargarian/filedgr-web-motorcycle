@@ -14,6 +14,7 @@ import { LogOut, Menu, Wallet } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { appRoutes } from "../constants/routes";
 import { CopyableHash } from "./CopyableHash";
+import { Logo } from "./Logo";
 
 const NAV = [
   { to: appRoutes.dashboard.path, label: "Home", end: true },
@@ -36,12 +37,7 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 h-16 border-b border-border/60 bg-abyss-900/70 backdrop-blur-md">
       <div className="container mx-auto flex h-full items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2.5">
-          <span className="h-2 w-2 rounded-full bg-primary shadow-glow" />
-          <span className="text-lg font-medium tracking-wide text-glow-50">
-            Dealership
-          </span>
-        </Link>
+        <Logo />
 
         {!isMobile && (
           <nav className="flex items-center gap-8">

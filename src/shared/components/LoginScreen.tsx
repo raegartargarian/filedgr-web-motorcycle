@@ -1,5 +1,6 @@
 import { useWeb3Auth } from "@/containers/global/Web3AuthProvider";
 import { HeroVideo } from "@/shared/components/HeroVideo";
+import { Logo } from "@/shared/components/Logo";
 import { motion } from "framer-motion";
 import { ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 
@@ -15,9 +16,7 @@ export const LoginScreen = () => {
     <HeroVideo className="min-h-screen">
       <div className="flex min-h-screen flex-col">
         <div className="container mx-auto flex h-16 items-center px-4">
-          <span className="text-lg font-medium tracking-wide text-glow-50">
-            Dealership
-          </span>
+          <Logo asLink={false} />
         </div>
 
         <div className="container mx-auto flex flex-1 items-end px-4 pb-16 md:items-center md:pb-0">
