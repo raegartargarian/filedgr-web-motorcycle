@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getStreamAttachments } from "@/shared/providers/api";
+import { readListPage } from "@/shared/utils/listPage";
 import { streamDetailPath } from "@/shared/constants/routes";
 import { VaultStreamDto } from "@/shared/types/vault";
 import { getStatusConfig } from "@/shared/utils/statusConfig";
@@ -47,9 +48,11 @@ const StreamList: React.FC<StreamListProps> = ({ vaultId, streams }) => {
               1,
               PREVIEW_COUNT,
             );
-            const previews: Attachment[] = res.data?.content || [];
-            const total = res.data?.total_records ?? previews.length;
-            return [stream.id, { previews, total }] as const;
+            const { content, total_records } = readListPage<Attachment>(res, 1);
+            return [
+              stream.id,
+              { previews: content, total: total_records },
+            ] as const;
           } catch (error) {
             console.error("Failed to load attachments:", error);
             return [stream.id, empty] as const;

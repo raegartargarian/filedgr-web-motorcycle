@@ -1,4 +1,4 @@
-import { HeroVideo } from "@/shared/components/HeroVideo";
+import { HeroIntro } from "@/shared/components/HeroIntro";
 import { appRoutes } from "@/shared/constants/routes";
 import { motion } from "framer-motion";
 import {
@@ -9,7 +9,6 @@ import {
   ChevronDown,
   FileText,
   Shield,
-  ShieldCheck,
   Wrench,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -75,51 +74,33 @@ const Dashboard = () => {
   return (
     <div>
       {/* Hero */}
-      <HeroVideo className="min-h-[640px] h-[calc(100svh-64px)]">
-        <div className="container mx-auto flex h-full flex-col justify-end px-4 pb-20 md:pb-24">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="max-w-2xl text-center md:text-left"
-          >
-            <span className="u-eyebrow inline-flex items-center gap-2">
-              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-              Blockchain-verified records
-            </span>
-            <h1 className="u-display mt-4 text-4xl leading-[1.05] sm:text-5xl lg:text-7xl">
-              Your motorcycle's
-              <br />
-              service history,
-              <br />
-              <span className="text-primary">on the record.</span>
-            </h1>
-            <p className="mx-auto mt-6 max-w-lg text-base text-mist-200 md:mx-0 md:text-lg">
-              Every repair and service, with photos, invoices and parts, sealed
-              on the blockchain so it can never be altered.
-            </p>
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row md:items-start">
-              <Link to={appRoutes.vaults.path} className="btn-primary">
-                View your motorcycles
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a href="#how-it-works" className="btn-ghost">
-                How it works
-              </a>
-            </div>
-          </motion.div>
-        </div>
+      <HeroIntro
+        eyebrow="Blockchain-verified records"
+        title={["Your motorcycle's", "service history,", "on the record."]}
+        subtitle="Every repair and service, with photos, invoices and parts, sealed on the blockchain so it can never be altered."
+        actions={
+          <>
+            <Link to={appRoutes.vaults.path} className="btn-primary">
+              View your motorcycles
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a href="#how-it-works" className="btn-ghost">
+              How it works
+            </a>
+          </>
+        }
+      >
         <motion.a
           href="#how-it-works"
           aria-label="Scroll to how it works"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.6 }}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 text-muted-foreground transition-colors hover:text-primary"
+          className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-muted-foreground transition-colors hover:text-primary"
         >
           <ChevronDown className="h-5 w-5 animate-bounce" />
         </motion.a>
-      </HeroVideo>
+      </HeroIntro>
 
       {/* How it works */}
       <section id="how-it-works" className="scroll-mt-16 py-20 md:py-28">

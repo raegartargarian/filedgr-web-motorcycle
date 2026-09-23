@@ -1,9 +1,14 @@
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { appRoutes } from "@/shared/constants/routes";
-import { getStatusConfig } from "@/shared/utils/statusConfig";
+import {
+  ARCHIVED_BADGE_CLASS,
+  getStatusConfig,
+} from "@/shared/utils/statusConfig";
 import { formatDate } from "@filedgr/web-core/format";
 import { categorize } from "@filedgr/web-core/preview";
 import {
+  Archive,
   ArrowRight,
   Calendar,
   FileText,
@@ -60,7 +65,10 @@ const ServiceRecordCard: React.FC<ServiceRecordCardProps> = ({
   return (
     <button
       onClick={handleClick}
-      className="w-full text-left u-card p-4 hover:shadow-md hover:border-neon-400/50 transition-all duration-200 cursor-pointer group"
+      className={cn(
+        "w-full text-left u-card p-4 hover:shadow-md hover:border-neon-400/50 transition-all duration-200 cursor-pointer group",
+        attachment.archived && "opacity-60 hover:opacity-100",
+      )}
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -94,6 +102,15 @@ const ServiceRecordCard: React.FC<ServiceRecordCardProps> = ({
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
+          {attachment.archived && (
+            <Badge
+              variant="secondary"
+              className={`text-xs ${ARCHIVED_BADGE_CLASS}`}
+            >
+              <Archive className="w-3 h-3 mr-1" />
+              Archived
+            </Badge>
+          )}
           {status && (
             <Badge
               variant="secondary"

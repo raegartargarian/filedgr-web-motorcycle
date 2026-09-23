@@ -18,6 +18,10 @@ import {
 export type StatusEntity = "vault" | "stream" | "attachment";
 export type StatusEntry = { label: string; className: string };
 
+/** Badge classes for a record taken out of its list; not a backend status. */
+export const ARCHIVED_BADGE_CLASS =
+  "border-steel-500 bg-steel-700 text-mist-200";
+
 const COLOR_CLASSES: Record<StatusColor, string> = {
   success: "status-success",
   error: "status-error",

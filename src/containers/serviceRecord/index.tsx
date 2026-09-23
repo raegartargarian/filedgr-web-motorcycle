@@ -5,7 +5,10 @@ import { CopyableHash } from "@/shared/components/CopyableHash";
 import RepairVisualization from "@/shared/components/RepairVisualization";
 import { cleanupRepairData } from "@/shared/utils/zipHandler";
 import { ledgerName } from "@/shared/utils/ledger";
-import { getStatusConfig } from "@/shared/utils/statusConfig";
+import {
+  ARCHIVED_BADGE_CLASS,
+  getStatusConfig,
+} from "@/shared/utils/statusConfig";
 import { viewTXInExplorer } from "@/shared/utils/viewVaultInExplorer";
 import { formatDate, formatFileSize } from "@filedgr/web-core/format";
 import {
@@ -15,6 +18,7 @@ import {
 } from "@filedgr/web-core/status";
 import {
   AlertCircle,
+  Archive,
   Calendar,
   ExternalLink,
   FileText,
@@ -116,6 +120,12 @@ const ServiceRecord = () => {
                       className={attachmentStatus.className}
                     >
                       {attachmentStatus.label}
+                    </Badge>
+                  )}
+                  {attachment?.archived && (
+                    <Badge variant="secondary" className={ARCHIVED_BADGE_CLASS}>
+                      <Archive className="w-3 h-3 mr-1" />
+                      Archived
                     </Badge>
                   )}
                   {attachment?.ledger && (

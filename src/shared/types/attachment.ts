@@ -21,6 +21,7 @@ export interface AttachmentStreamModel {
  */
 export type Attachment = AttachmentModel &
   FailureInfo & {
+    archived?: boolean;
     file_count?: number;
     stream?: AttachmentStreamModel;
   };
