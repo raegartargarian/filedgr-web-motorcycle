@@ -13,7 +13,7 @@ interface VaultItemProps {
   vault: VaultDto;
 }
 
-/** One motorcycle as a full-width showcase row, its photo as the backdrop. */
+/** One motorcycle as a showcase card (two per row on wide screens), its photo as the backdrop. */
 const VaultItem: React.FC<VaultItemProps> = ({ vault }) => {
   const status = vault.status ? getStatusConfig("vault", vault.status) : null;
   const streamCount = vault.streams?.length ?? 0;
@@ -21,7 +21,7 @@ const VaultItem: React.FC<VaultItemProps> = ({ vault }) => {
   return (
     <Link
       to={`${appRoutes.vaultDetail.name}${vault.id}`}
-      className="group relative block h-[48svh] min-h-[380px] overflow-hidden rounded-2xl border border-border bg-abyss-900 transition-all duration-300 hover:border-neon-400/50 hover:shadow-glow md:h-[56svh] md:min-h-[440px]"
+      className="group relative block h-[44svh] min-h-[340px] overflow-hidden rounded-2xl border border-border bg-abyss-900 transition-all duration-300 hover:border-neon-400/50 hover:shadow-glow"
     >
       <div className="absolute inset-0">
         <VaultImage
@@ -29,6 +29,7 @@ const VaultItem: React.FC<VaultItemProps> = ({ vault }) => {
           imgClassName="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
           iconClassName="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 text-steel-500/50"
         />
+        <div className="absolute inset-0 u-scrim" />
         <div className="absolute inset-0 u-vignette" />
       </div>
 
@@ -41,9 +42,9 @@ const VaultItem: React.FC<VaultItemProps> = ({ vault }) => {
         </Badge>
       )}
 
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-4 p-5 md:flex-row md:items-end md:justify-between md:p-8">
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-4 p-5 md:p-6 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
-          <h2 className="u-display text-3xl leading-[1.05] sm:text-4xl md:text-5xl">
+          <h2 className="u-display text-3xl leading-[1.05] lg:text-4xl">
             {vault.name}
           </h2>
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-mist-200">
@@ -65,7 +66,7 @@ const VaultItem: React.FC<VaultItemProps> = ({ vault }) => {
             )}
           </div>
         </div>
-        <span className="btn-primary flex-shrink-0 self-start md:self-auto">
+        <span className="btn-primary h-10 flex-shrink-0 self-start px-4 py-0 text-xs xl:self-auto">
           Open service history
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </span>

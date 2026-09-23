@@ -49,6 +49,7 @@ export const VaultCover: React.FC<VaultCoverProps> = ({
         imgClassName="h-full w-full object-cover"
         iconClassName="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 text-steel-500/50"
       />
+      <div className="absolute inset-0 u-scrim" />
       <div className="absolute inset-0 u-vignette" />
     </div>
 

@@ -41,6 +41,17 @@
       );
   }
 
+  /* Scrim under cover copy: keeps text readable on any photo, light or dark. */
+  .u-scrim {
+    background: linear-gradient(
+      to top,
+      rgb(7 13 18 / 96%) 0%,
+      rgb(7 13 18 / 86%) 32%,
+      rgb(7 13 18 / 55%) 62%,
+      rgb(7 13 18 / 30%) 100%
+    );
+  }
+
   /* Feathers an element's edges into whatever sits behind it. */
   .u-feather {
     -webkit-mask-image: radial-gradient(

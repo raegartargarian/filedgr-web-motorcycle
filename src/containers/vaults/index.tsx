@@ -65,17 +65,17 @@ const Vaults = () => {
         </div>
 
         {isFirstLoading ? (
-          <div className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
             {Array.from({ length: 2 }).map((_, index) => (
               <Skeleton
-                className="h-[48svh] min-h-[380px] w-full rounded-2xl md:h-[56svh]"
+                className="h-[44svh] min-h-[340px] w-full rounded-2xl"
                 key={index}
               />
             ))}
           </div>
         ) : (
           <>
-            <div className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
               {vaults.map((vault) => (
                 <VaultItem key={vault.id} vault={vault} />
               ))}
