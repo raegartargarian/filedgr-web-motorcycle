@@ -1,9 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CopyableHash } from "@/shared/components/CopyableHash";
 import { LoadingIndicator } from "@/shared/components/LoadingIndicator";
+import { RecordTimeline } from "@/shared/components/RecordTimeline";
+import { VaultCover } from "@/shared/components/VaultCover";
+import { appRoutes } from "@/shared/constants/routes";
 import { cn } from "@/lib/utils";
 import { getStreamAttachments } from "@/shared/providers/api";
 import { readListPage } from "@/shared/utils/listPage";
@@ -25,7 +27,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { archivedCountOf } from "./archivedCount";
-import ServiceRecordCard from "../vaultDetail/components/ServiceRecordCard";
 import { vaultDetailSelectors } from "../vaultDetail/selectors";
 import { vaultDetailActions } from "../vaultDetail/slice";
 import { Attachment } from "../vaultDetail/types";
@@ -157,125 +158,117 @@ const StreamDetail = () => {
     ? getStatusConfig("stream", stream.status)
     : null;
 
+  const streamName = stream ? formatStreamName(stream) : "Service Stream";
+
   return (
     <div className="min-h-screen">
-      <div className="max-w-4xl mx-auto py-8 px-4">
-        {/* Stream header */}
-        <div className="u-card p-6 mb-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 u-tile rounded-xl flex-shrink-0">
-              <Layers className="w-6 h-6 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl md:text-2xl truncate">
-                {stream ? formatStreamName(stream) : "Service Stream"}
-              </h1>
-              {stream?.description && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  {stream.description}
-                </p>
-              )}
-              <div className="flex flex-wrap items-center gap-3 mt-3">
-                {status && (
-                  <Badge variant="secondary" className={status.className}>
-                    {status.label}
-                  </Badge>
-                )}
-                {stream?.ledger && (
-                  <Badge
-                    variant="secondary"
-                    className="bg-steel-700 text-mist-200 border-border"
-                  >
-                    {ledgerName(stream.ledger) || stream.ledger}
-                  </Badge>
-                )}
-                {stream?.created_at && (
-                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <Calendar className="w-3.5 h-3.5" />
-                    Created {formatDate(stream.created_at)}
-                  </span>
-                )}
-                {totalRecords != null && (
-                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <FileText className="w-3.5 h-3.5" />
-                    {totalRecords} record{totalRecords !== 1 ? "s" : ""}
-                  </span>
-                )}
-                {offerArchived && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    aria-pressed={showArchived}
-                    onClick={() => setShowArchived((on) => !on)}
-                    title="Archived records stay in the vault, out of the way. Show them alongside the rest."
-                    className={cn(
-                      "h-7",
-                      showArchived &&
-                        "border-gold-400/40 bg-gold-400/10 text-gold-300 hover:bg-gold-400/20 hover:text-gold-300",
-                    )}
-                  >
-                    <Archive className="w-3.5 h-3.5 mr-1.5" />
-                    Show archived
-                    {archivedCount != null && ` (${archivedCount})`}
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {(stream?.tx_hash || stream?.asset_code) && (
+      {vault && (
+        <VaultCover
+          vault={vault}
+          size="compact"
+          backTo={{
+            to: `${appRoutes.vaultDetail.name}${vault.id}`,
+            label: vault.name,
+          }}
+          eyebrow="Service stream"
+          title={streamName}
+          meta={
             <>
-              <Separator className="my-5" />
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                  {stream?.tx_hash && (
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-trellis-400" />
-                      <span className="text-sm text-trellis-400 font-medium">
-                        Verified on blockchain
-                      </span>
-                      <CopyableHash value={stream.tx_hash} />
-                    </div>
-                  )}
-                  {stream?.asset_code && (
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <span>Stream:</span>
-                      <CopyableHash value={stream.asset_code} />
-                    </div>
-                  )}
-                </div>
-                {stream?.tx_hash && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      viewTXInExplorer(stream.tx_hash!, stream.ledger)
-                    }
-                    className="w-fit"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
-                    Explorer
-                  </Button>
-                )}
-              </div>
+              {status && (
+                <Badge variant="outline" className={status.className}>
+                  {status.label}
+                </Badge>
+              )}
+              {stream?.ledger && (
+                <Badge
+                  variant="secondary"
+                  className="border-border bg-steel-700/80 text-mist-200"
+                >
+                  {ledgerName(stream.ledger) || stream.ledger}
+                </Badge>
+              )}
+              {stream?.created_at && (
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5" />
+                  Created {formatDate(stream.created_at)}
+                </span>
+              )}
+              {totalRecords != null && (
+                <span className="flex items-center gap-1.5">
+                  <FileText className="h-3.5 w-3.5" />
+                  {totalRecords} record{totalRecords !== 1 ? "s" : ""}
+                </span>
+              )}
             </>
+          }
+          actions={
+            <>
+              {offerArchived && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  aria-pressed={showArchived}
+                  onClick={() => setShowArchived((on) => !on)}
+                  title="Archived records stay in the vault, out of the way. Show them alongside the rest."
+                  className={cn(
+                    "h-10 bg-abyss-900/40 backdrop-blur-sm",
+                    showArchived &&
+                      "border-gold-400/40 bg-gold-400/10 text-gold-300 hover:bg-gold-400/20 hover:text-gold-300",
+                  )}
+                >
+                  <Archive className="mr-1.5 h-3.5 w-3.5" />
+                  Show archived
+                  {archivedCount != null && ` (${archivedCount})`}
+                </Button>
+              )}
+              {stream?.tx_hash && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    viewTXInExplorer(stream.tx_hash!, stream.ledger)
+                  }
+                  className="btn-ghost h-10 px-4 py-0 text-xs"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Explorer
+                </button>
+              )}
+            </>
+          }
+        >
+          {(stream?.tx_hash || stream?.asset_code) && (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+              {stream?.tx_hash && (
+                <span className="flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-trellis-400" />
+                  <span className="font-medium text-trellis-400">
+                    Verified on blockchain
+                  </span>
+                  <CopyableHash value={stream.tx_hash} />
+                </span>
+              )}
+              {stream?.asset_code && (
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  Stream:
+                  <CopyableHash value={stream.asset_code} />
+                </span>
+              )}
+            </div>
           )}
-        </div>
+        </VaultCover>
+      )}
 
-        {/* Records */}
+      <div className="container mx-auto max-w-5xl px-4 py-8 md:py-10">
         {isFirstLoad ? (
-          <div className="space-y-2">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton
-                key={i}
-                className="h-16 w-full bg-steel-700 rounded-lg"
-              />
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 w-full rounded-lg" />
             ))}
           </div>
         ) : attachments.length === 0 ? (
           <div className="u-card p-12 text-center">
-            <Layers className="w-10 h-10 text-steel-500 mx-auto mb-3" />
-            <h3 className="text-base mb-1">No service records yet</h3>
+            <Layers className="mx-auto mb-3 h-10 w-10 text-steel-500" />
+            <h3 className="mb-1 text-base">No service records yet</h3>
             <p className="text-sm text-muted-foreground">
               Records will appear here once the dealership uploads
               documentation.
@@ -283,19 +276,14 @@ const StreamDetail = () => {
           </div>
         ) : (
           <>
-            <div className="space-y-2">
-              {attachments.map((attachment) => (
-                <ServiceRecordCard
-                  key={attachment.id}
-                  attachment={attachment}
-                />
-              ))}
-            </div>
+            <RecordTimeline
+              records={attachments.map((attachment) => ({ attachment }))}
+            />
             {hasMore && (
               <div ref={sentinelRef} aria-hidden className="h-px w-full" />
             )}
             {isFetching && attachments.length > 0 && (
-              <div className="w-full flex items-center justify-center mt-6">
+              <div className="mt-6 flex w-full items-center justify-center">
                 <LoadingIndicator />
               </div>
             )}

@@ -1,36 +1,22 @@
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { CopyableHash } from "@/shared/components/CopyableHash";
-import { FileThumbnailButton } from "@/shared/components/FileThumbnailButton";
-import { ipfsFileUrl } from "@/shared/providers/ipfs";
+import { FileCard } from "@/shared/components/FileCard";
+import { FileLightbox } from "@/shared/components/FileLightbox";
 import { Attachment, AttachmentFileModel } from "@/shared/types/attachment";
 import { createIpfsResolver } from "@/shared/utils/previewResolver";
-import { getStatusConfig } from "@/shared/utils/statusConfig";
-import { formatFileSize } from "@filedgr/web-core/format";
-import {
-  categorize,
-  FilePreview,
-  PreviewSource,
-} from "@filedgr/web-core/preview";
-import { AnimatePresence, motion } from "framer-motion";
-import { Download, File, FileText, Image as ImageIcon, X } from "lucide-react";
+import { PreviewSource } from "@filedgr/web-core/preview";
+import { motion } from "framer-motion";
+import { ChevronDown, File } from "lucide-react";
 import React, { useMemo, useState } from "react";
 
 interface FileViewerProps {
   attachment: Attachment;
 }
 
-const isImage = (file: AttachmentFileModel) =>
-  categorize(file.mimetype, file.filename) === "image";
-
-const isPdf = (file: AttachmentFileModel) =>
-  categorize(file.mimetype, file.filename) === "pdf";
-
-const toSource = (file: AttachmentFileModel): PreviewSource => ({
-  id: file.cid!,
-  filename: file.filename || "document.pdf",
+const toSource = (file: AttachmentFileModel, index: number): PreviewSource => ({
+  id: file.cid ?? `${index}`,
+  filename: file.filename || "file",
   mimeType: file.mimetype,
-  size: file.size,
+  size: file.size ?? undefined,
 });
 
 const staggerContainer = {
@@ -42,10 +28,11 @@ const staggerItem = {
   animate: { opacity: 1, y: 0, transition: { duration: 0.35 } },
 };
 
+/** Files of a plain (non-repair) record: a thumbnail grid with one lightbox. */
 const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedPdf, setSelectedPdf] = useState<PreviewSource | null>(null);
-  const files = attachment.files ?? [];
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const files = (attachment.files ?? []).filter((f) => f.cid);
   const isPublic = attachment.public_vault !== false;
   const resolver = useMemo(
     () =>
@@ -56,13 +43,14 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
       }),
     [isPublic, attachment.tx_hash, attachment.ledger],
   );
+  const sources = useMemo(() => files.map(toSource), [files]);
 
   if (files.length === 0) {
     return (
       <div className="u-card p-12 text-center">
-        <File className="w-12 h-12 text-steel-500 mx-auto mb-4" />
-        <h3 className="text-lg mb-2">No files available</h3>
-        <p className="text-muted-foreground max-w-md mx-auto">
+        <File className="mx-auto mb-4 h-12 w-12 text-steel-500" />
+        <h3 className="mb-2 text-lg">No files available</h3>
+        <p className="mx-auto max-w-md text-muted-foreground">
           This service record does not contain any viewable files.
         </p>
       </div>
@@ -75,190 +63,64 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="space-y-4"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
       >
-        {files.map((file, index) => {
-          const url = file.cid ? ipfsFileUrl(file.cid, isPublic) : null;
-
-          return (
-            <motion.div key={file.id ?? index} variants={staggerItem}>
-              <Card className="overflow-hidden">
-                <CardContent className="p-0">
-                  {/* File header */}
-                  <div className="flex items-center justify-between gap-3 px-5 py-3 border-b border-border">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 u-tile flex-shrink-0">
-                        {isImage(file) ? (
-                          <ImageIcon className="w-4 h-4 text-primary" />
-                        ) : isPdf(file) ? (
-                          <FileText className="w-4 h-4 text-red-300" />
-                        ) : (
-                          <File className="w-4 h-4 text-muted-foreground" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">
-                          {file.filename || "Unnamed file"}
-                        </p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          {file.mimetype && (
-                            <Badge
-                              variant="secondary"
-                              className="bg-steel-700 text-mist-200 border-border text-[10px] px-1.5 py-0"
-                            >
-                              {file.mimetype}
-                            </Badge>
-                          )}
-                          {file.size != null && (
-                            <span className="text-xs text-muted-foreground">
-                              {formatFileSize(file.size)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {url && (
-                      <a
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-primary hover:text-neon-300 text-xs font-medium flex-shrink-0"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        Download
-                      </a>
-                    )}
-                  </div>
-
-                  {/* File preview */}
-                  {isImage(file) && url && (
-                    <motion.div
-                      whileHover={{ scale: 1.005 }}
-                      className="cursor-pointer bg-abyss-900/60 flex items-center justify-center p-4"
-                      onClick={() => setSelectedImage(url)}
-                    >
-                      <img
-                        src={url}
-                        alt={file.filename || "Image"}
-                        className="max-h-96 w-auto object-contain rounded-lg"
-                      />
-                    </motion.div>
-                  )}
-
-                  {isPdf(file) && url && (
-                    <div className="bg-abyss-900/60 flex items-center justify-center p-4">
-                      <div className="w-full max-w-[280px] aspect-[3/4] rounded-lg border border-border shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                        <FileThumbnailButton
-                          source={toSource(file)}
-                          resolver={resolver}
-                          onOpen={() => setSelectedPdf(toSource(file))}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* File metadata */}
-                  <div className="px-5 py-3 bg-abyss-900/40 border-t border-border">
-                    <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
-                      {file.hash && (
-                        <span className="flex items-center gap-1.5">
-                          Hash:
-                          <CopyableHash value={file.hash} />
-                        </span>
-                      )}
-                      {file.cid && (
-                        <span className="flex items-center gap-1.5">
-                          CID:
-                          <CopyableHash value={file.cid} />
-                        </span>
-                      )}
-                      {file.status && (
-                        <span>
-                          Status:{" "}
-                          <span className="text-muted-foreground">
-                            {getStatusConfig("attachment", file.status).label}
-                          </span>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          );
-        })}
+        {sources.map((source, index) => (
+          <motion.div key={source.id} variants={staggerItem}>
+            <FileCard
+              source={source}
+              resolver={resolver}
+              onOpen={() => setOpenIndex(index)}
+            />
+          </motion.div>
+        ))}
       </motion.div>
 
-      {/* Lightbox */}
-      <AnimatePresence>
-        {selectedImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={() => setSelectedImage(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="relative max-w-5xl max-h-[90vh] w-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setSelectedImage(null)}
-                className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors"
+      <div className="u-card overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setShowDetails((on) => !on)}
+          aria-expanded={showDetails}
+          className="flex w-full items-center justify-between px-4 py-3 text-sm text-mist-200 transition-colors hover:text-glow-50"
+        >
+          File details
+          <ChevronDown
+            className={`h-4 w-4 transition-transform ${showDetails ? "rotate-180" : ""}`}
+          />
+        </button>
+        {showDetails && (
+          <div className="divide-y divide-border border-t border-border">
+            {files.map((file, index) => (
+              <div
+                key={file.cid ?? index}
+                className="flex flex-wrap items-center gap-x-6 gap-y-1 px-4 py-2.5 text-xs text-muted-foreground"
               >
-                <X className="w-6 h-6" />
-              </button>
-              <img
-                src={selectedImage}
-                alt="Full size preview"
-                className="w-full h-auto max-h-[85vh] object-contain rounded-xl"
-              />
-            </motion.div>
-          </motion.div>
+                <span className="min-w-0 flex-1 truncate text-mist-100">
+                  {file.filename}
+                </span>
+                {file.hash && (
+                  <span className="flex items-center gap-1.5">
+                    Hash <CopyableHash value={file.hash} />
+                  </span>
+                )}
+                {file.cid && (
+                  <span className="flex items-center gap-1.5">
+                    CID <CopyableHash value={file.cid} />
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
         )}
-      </AnimatePresence>
+      </div>
 
-      {/* PDF preview modal — mounts the full pdf.js viewer only on demand */}
-      <AnimatePresence>
-        {selectedPdf && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={() => setSelectedPdf(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="relative w-full max-w-5xl h-[90vh] bg-steel-800 rounded-xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setSelectedPdf(null)}
-                className="absolute top-2 right-2 z-10 bg-black/40 hover:bg-black/60 text-white rounded-full p-1.5 transition-colors"
-                aria-label="Close preview"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <FilePreview
-                source={selectedPdf}
-                resolver={resolver}
-                className="fdgr-host h-full"
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <FileLightbox
+        items={sources}
+        index={openIndex}
+        resolver={resolver}
+        onClose={() => setOpenIndex(null)}
+        onIndexChange={setOpenIndex}
+      />
     </div>
   );
 };

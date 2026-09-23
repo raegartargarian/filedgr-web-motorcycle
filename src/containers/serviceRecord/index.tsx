@@ -28,7 +28,11 @@ import {
 } from "lucide-react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { vaultDetailSelectors } from "../vaultDetail/selectors";
+import { appRoutes, streamDetailPath } from "@/shared/constants/routes";
+import { formatStreamName } from "@/shared/utils/streamHelpers";
+import { ChevronRight } from "lucide-react";
 import FileViewer from "./components/FileViewer";
 import { serviceRecordSelectors } from "./selectors";
 import { serviceRecordActions } from "./slice";
@@ -42,6 +46,10 @@ const ServiceRecord = () => {
   const isLoading = useSelector(serviceRecordSelectors.isLoading);
   const isProcessingZip = useSelector(serviceRecordSelectors.isProcessingZip);
   const error = useSelector(serviceRecordSelectors.error);
+  const vault = useSelector(vaultDetailSelectors.vault);
+  const vaultStream = vault?.streams?.find(
+    (s) => s.asset_code === attachment?.stream?.asset_code,
+  );
 
   const attachmentStatus = attachment?.status
     ? getStatusConfig("attachment", attachment.status)
@@ -96,6 +104,40 @@ const ServiceRecord = () => {
   return (
     <div className="min-h-screen">
       <div className="max-w-6xl mx-auto py-8 px-4">
+        {/* Where this record lives */}
+        {(vault || attachment?.stream) && (
+          <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
+            <Link
+              to={appRoutes.vaults.path}
+              className="transition-colors hover:text-primary"
+            >
+              My motorcycles
+            </Link>
+            {vault && (
+              <>
+                <ChevronRight className="h-3.5 w-3.5" />
+                <Link
+                  to={`${appRoutes.vaultDetail.name}${vault.id}`}
+                  className="transition-colors hover:text-primary"
+                >
+                  {vault.name}
+                </Link>
+              </>
+            )}
+            {vault && vaultStream?.asset_code && (
+              <>
+                <ChevronRight className="h-3.5 w-3.5" />
+                <Link
+                  to={streamDetailPath(vault.id, vaultStream.asset_code)}
+                  className="transition-colors hover:text-primary"
+                >
+                  {formatStreamName(vaultStream)}
+                </Link>
+              </>
+            )}
+          </nav>
+        )}
+
         {/* Attachment Header */}
         <div className="u-card p-6 mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

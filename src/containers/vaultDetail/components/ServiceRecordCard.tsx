@@ -22,10 +22,16 @@ import { Attachment } from "../types";
 
 interface ServiceRecordCardProps {
   attachment: Attachment;
+  /** Pill naming the stream, for lists that mix streams. */
+  streamLabel?: string;
+  /** On a timeline the rail shows the date, so the card hides its own on wide screens. */
+  inTimeline?: boolean;
 }
 
 const ServiceRecordCard: React.FC<ServiceRecordCardProps> = ({
   attachment,
+  streamLabel,
+  inTimeline = false,
 }) => {
   const navigate = useNavigate();
   const status = attachment.status
@@ -87,7 +93,12 @@ const ServiceRecordCard: React.FC<ServiceRecordCardProps> = ({
             </p>
             <div className="flex flex-wrap items-center gap-2 mt-0.5">
               {attachment.created_at && (
-                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <span
+                  className={cn(
+                    "flex items-center gap-1 text-xs text-muted-foreground",
+                    inTimeline && "md:hidden",
+                  )}
+                >
                   <Calendar className="w-3 h-3" />
                   {formatDate(attachment.created_at)}
                 </span>
@@ -102,6 +113,14 @@ const ServiceRecordCard: React.FC<ServiceRecordCardProps> = ({
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
+          {streamLabel && (
+            <Badge
+              variant="secondary"
+              className="hidden border-border bg-steel-700 text-[11px] text-mist-200 sm:inline-flex"
+            >
+              {streamLabel}
+            </Badge>
+          )}
           {attachment.archived && (
             <Badge
               variant="secondary"

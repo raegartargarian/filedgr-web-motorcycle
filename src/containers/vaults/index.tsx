@@ -48,43 +48,43 @@ const Vaults = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-5xl mx-auto py-8 px-4">
-        {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="u-tile w-10 h-10">
-              <Bike className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-2xl">Your Motorcycles</h1>
-              <p className="text-sm text-muted-foreground">
-                View your registered motorcycles and their service history
-              </p>
-            </div>
+      <div className="container mx-auto max-w-6xl px-4 py-10">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <span className="u-eyebrow">Your garage</span>
+            <h1 className="u-display mt-2 text-4xl md:text-5xl">
+              Your motorcycles
+            </h1>
           </div>
+          {!isFirstLoading && (
+            <span className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Bike className="h-4 w-4 text-primary" />
+              {vaults.length} registered
+            </span>
+          )}
         </div>
 
-        {/* Motorcycle Grid */}
         {isFirstLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <Skeleton className="h-[230px] w-full rounded-xl" key={index} />
+          <div className="space-y-6">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <Skeleton
+                className="h-[48svh] min-h-[380px] w-full rounded-2xl md:h-[56svh]"
+                key={index}
+              />
             ))}
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="space-y-6">
               {vaults.map((vault) => (
-                <div key={vault.id}>
-                  <VaultItem vault={vault} />
-                </div>
+                <VaultItem key={vault.id} vault={vault} />
               ))}
             </div>
             {hasMore && vaults.length > 0 && (
               <div ref={sentinelRef} aria-hidden className="h-px w-full" />
             )}
             {isFetching && (
-              <div className="w-full flex items-center justify-center mt-8">
+              <div className="mt-8 flex w-full items-center justify-center">
                 <LoadingIndicator />
               </div>
             )}

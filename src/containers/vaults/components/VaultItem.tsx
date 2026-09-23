@@ -2,73 +2,75 @@ import { Badge } from "@/components/ui/badge";
 import { VaultImage } from "@/shared/components/VaultImage";
 import { appRoutes } from "@/shared/constants/routes";
 import { VaultDto } from "@/shared/types/vault";
+import { ledgerName } from "@/shared/utils/ledger";
 import { getStatusConfig } from "@/shared/utils/statusConfig";
 import { formatDate } from "@filedgr/web-core/format";
-import { ArrowRight, Calendar, Layers } from "lucide-react";
+import { ArrowRight, Calendar, Layers, Link2 } from "lucide-react";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface VaultItemProps {
   vault: VaultDto;
 }
 
+/** One motorcycle as a full-width showcase row, its photo as the backdrop. */
 const VaultItem: React.FC<VaultItemProps> = ({ vault }) => {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate(`${appRoutes.vaultDetail.name}${vault.id}`);
-  };
-
   const status = vault.status ? getStatusConfig("vault", vault.status) : null;
+  const streamCount = vault.streams?.length ?? 0;
 
   return (
-    <button
-      onClick={handleClick}
-      className="u-card group flex h-full w-full cursor-pointer flex-col overflow-hidden text-left transition-all duration-200 hover:border-neon-400/50 hover:shadow-lg"
+    <Link
+      to={`${appRoutes.vaultDetail.name}${vault.id}`}
+      className="group relative block h-[48svh] min-h-[380px] overflow-hidden rounded-2xl border border-border bg-abyss-900 transition-all duration-300 hover:border-neon-400/50 hover:shadow-glow md:h-[56svh] md:min-h-[440px]"
     >
-      {/* Top half: vault image (with graceful fallback) */}
-      <div className="relative flex h-36 items-center justify-center overflow-hidden bg-gradient-to-br from-steel-700 to-abyss-900">
+      <div className="absolute inset-0">
         <VaultImage
           vault={vault}
-          imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          iconClassName="w-10 h-10 text-steel-500"
+          imgClassName="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+          iconClassName="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 text-steel-500/50"
         />
-
-        {status && (
-          <Badge
-            variant="outline"
-            className={`absolute right-2 top-2 px-2 py-0.5 text-[10px] ${status.className}`}
-          >
-            {status.label}
-          </Badge>
-        )}
+        <div className="absolute inset-0 u-vignette" />
       </div>
 
-      {/* Bottom: details */}
-      <div className="flex flex-1 flex-col p-4">
-        <h3 className="mb-3 truncate text-base transition-colors group-hover:text-primary">
-          {vault.name}
-        </h3>
+      {status && (
+        <Badge
+          variant="outline"
+          className={`absolute left-5 top-5 px-2.5 py-0.5 text-[11px] ${status.className}`}
+        >
+          {status.label}
+        </Badge>
+      )}
 
-        <div className="mt-auto flex items-center justify-between border-t border-border pt-3">
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-4 p-5 md:flex-row md:items-end md:justify-between md:p-8">
+        <div className="min-w-0">
+          <h2 className="u-display text-3xl leading-[1.05] sm:text-4xl md:text-5xl">
+            {vault.name}
+          </h2>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-mist-200">
             {vault.created_at && (
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {formatDate(vault.created_at)}
+              <span className="flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                Registered {formatDate(vault.created_at)}
               </span>
             )}
-            {vault.streams && vault.streams.length > 0 && (
-              <span className="flex items-center gap-1">
-                <Layers className="h-3 w-3" />
-                {vault.streams.length}
+            <span className="flex items-center gap-1.5">
+              <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+              {streamCount} stream{streamCount !== 1 ? "s" : ""}
+            </span>
+            {vault.ledger && (
+              <span className="flex items-center gap-1.5">
+                <Link2 className="h-3.5 w-3.5 text-muted-foreground" />
+                {ledgerName(vault.ledger) || vault.ledger}
               </span>
             )}
           </div>
-          <ArrowRight className="h-4 w-4 text-steel-500 transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
         </div>
+        <span className="btn-primary flex-shrink-0 self-start md:self-auto">
+          Open service history
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </span>
       </div>
-    </button>
+    </Link>
   );
 };
 
