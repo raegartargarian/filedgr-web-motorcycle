@@ -1,47 +1,68 @@
 {
   "vehicleInfo": {
-    "make": "Subaru",
-    "model": "Outback",
+    "make": "Kawasaki",
+    "model": "Ninja H2",
     "year": "2024",
-    "vin": "4T1BF1FK5KU123456",
-    "mileage": "45,230",
-    "licensePlate": "VA-ABC123"
+    "vin": "JKBZXNH15RA012345",
+    "mileage": "12,480",
+    "licensePlate": "VA-MTO482"
   },
   "repairInfo": {
-    "date": "2025-08-26",
-    "type": "Oil Change & Tie Rod End Replacement (Left)",
-    "description": "Full synthetic oil change with new filter and replacement of left front tie rod end due to impact damage, along with a four-wheel alignment.",
-    "laborHours": 2.5,
-    "cost": 346.57,
-    "warranty": "6 months / 6,000 miles on oil change",
-    "technician": "Mike Johnson (ASE Certified)"
+    "date": "2026-09-12",
+    "type": "Chain & Sprocket Replacement, Front Brake Pads & Oil Change",
+    "description": "Replaced worn drive chain and both sprockets after stretch exceeded the service limit, fitted new sintered front brake pads and bled the front circuit, then performed a full synthetic oil and filter change with a final chain tension and alignment check.",
+    "laborHours": 3.0,
+    "cost": 765.8,
+    "warranty": "12 months / 12,000 miles on parts and labour",
+    "technician": "Dana Kowalski (Kawasaki Certified)"
   },
   "partsUsed": [
     {
-      "partName": "Mobil 1 Full Synthetic Oil",
-      "partNumber": "MOB1-5W30",
-      "quantity": 5,
-      "cost": 45.0,
+      "partName": "DID 525ZVM-X X-Ring Chain, 120 links",
+      "partNumber": "DID-525ZVMX-120",
+      "quantity": 1,
+      "cost": 189.0,
+      "warranty": "12 months"
+    },
+    {
+      "partName": "JT Front Sprocket, 18T",
+      "partNumber": "JTF-1537-18",
+      "quantity": 1,
+      "cost": 32.5,
+      "warranty": "12 months"
+    },
+    {
+      "partName": "JT Rear Sprocket, 46T",
+      "partNumber": "JTR-1489-46",
+      "quantity": 1,
+      "cost": 58.9,
+      "warranty": "12 months"
+    },
+    {
+      "partName": "EBC Double-H Sintered Front Brake Pads",
+      "partNumber": "EBC-FA447HH",
+      "quantity": 2,
+      "cost": 49.0,
+      "warranty": "12 months"
+    },
+    {
+      "partName": "Motul 7100 10W-40 Full Synthetic",
+      "partNumber": "MOT-7100-10W40",
+      "quantity": 4,
+      "cost": 18.0,
       "warranty": "6 months"
     },
     {
-      "partName": "OEM Oil Filter",
-      "partNumber": "TOY-90915-YZZD3",
+      "partName": "K&N Performance Oil Filter",
+      "partNumber": "KN-303",
       "quantity": 1,
-      "cost": 15.0,
+      "cost": 16.0,
       "warranty": "6 months"
-    },
-    {
-      "partName": "Tie Rod End, Front Left",
-      "partNumber": "SUB-34161AJ010",
-      "quantity": 1,
-      "cost": 75.0,
-      "warranty": "12 months/12,000 miles"
     }
   ],
   "timestamps": {
-    "started": "2025-08-26T09:30:00Z",
-    "completed": "2025-08-26T12:00:00Z",
-    "inspected": "2025-08-26T12:15:00Z"
+    "started": "2026-09-12T08:30:00Z",
+    "completed": "2026-09-12T11:30:00Z",
+    "inspected": "2026-09-12T11:45:00Z"
   }
 }
