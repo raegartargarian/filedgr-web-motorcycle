@@ -1,8 +1,9 @@
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import NoActivity from "@/shared/components/EmptyData";
 import { LoadingIndicator } from "@/shared/components/LoadingIndicator";
 import { useInfiniteScroll } from "@filedgr/web-core/react";
-import { Bike } from "lucide-react";
+import { AlertTriangle, Bike } from "lucide-react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GlobalSelectors } from "../global/selectors";
@@ -18,6 +19,7 @@ const Vaults = () => {
   const isFetching = useSelector(vaultsSelectors.isFetching);
   const currentPage = useSelector(vaultsSelectors.currentPage);
   const hasMore = useSelector(vaultsSelectors.hasMore);
+  const error = useSelector(vaultsSelectors.error);
   const authData = useSelector(GlobalSelectors.authData);
 
   useEffect(() => {
@@ -35,11 +37,29 @@ const Vaults = () => {
     return (
       <div className="min-h-screen">
         <div className="max-w-5xl mx-auto py-8 px-4">
-          <div className="flex justify-center items-center mt-16">
-            <NoActivity
-              title="No Motorcycles Found"
-              description="No motorcycles have been registered yet. Motorcycles will appear here once the dealership registers them."
-            />
+          <div className="flex flex-col justify-center items-center mt-16">
+            {error ? (
+              <>
+                <NoActivity
+                  icon={AlertTriangle}
+                  title="Couldn't Load Motorcycles"
+                  description="Something went wrong while loading your motorcycles. Please try again."
+                />
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    dispatch(vaultsActions.fetchVaultsStart({ page: 1 }))
+                  }
+                >
+                  Try again
+                </Button>
+              </>
+            ) : (
+              <NoActivity
+                title="No Motorcycles Found"
+                description="No motorcycles have been registered yet. Motorcycles will appear here once the dealership registers them."
+              />
+            )}
           </div>
         </div>
       </div>

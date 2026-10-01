@@ -1,5 +1,3 @@
-import { getFixtureFileUrl } from "@/shared/fixtures";
-
 const env = import.meta.env.VITE_ENV || "development";
 const getIPFsPubAddr = () => {
   return env === "development"
@@ -17,8 +15,8 @@ const getIPFsPrivAddr = () => {
 };
 
 export const getIPFSIMGAddr = (cid: string) => {
-  return getFixtureFileUrl(cid) ?? `https://${cid}${getIPFsPubAddr()}`;
+  return `https://${cid}${getIPFsPubAddr()}`;
 };
 export const getIPFSIMGAddrPrivate = (cid: string) => {
-  return getFixtureFileUrl(cid) ?? `https://${cid}${getIPFsPrivAddr()}`;
+  return `https://${cid}${getIPFsPrivAddr()}`;
 };
