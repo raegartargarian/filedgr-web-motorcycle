@@ -124,8 +124,10 @@ export const FileLightbox: React.FC<FileLightboxProps> = ({
 
           {/* Body */}
           <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 pb-4 sm:px-16">
+            {/* The card is not keyed by file, so switching files swaps only the
+                viewer inside it instead of tearing the card down and springing
+                it back in. */}
             <motion.div
-              key={source.id}
               initial={{ scale: 0.96, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 26 }}
@@ -146,6 +148,7 @@ export const FileLightbox: React.FC<FileLightboxProps> = ({
                 )
               ) : (
                 <FilePreview
+                  key={source.id}
                   source={source}
                   resolver={resolver}
                   className="fdgr-host h-full"
@@ -161,7 +164,7 @@ export const FileLightbox: React.FC<FileLightboxProps> = ({
                   e.stopPropagation();
                   onIndexChange(index - 1);
                 }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-border bg-abyss-900/70 p-2 text-mist-200 transition-colors hover:border-neon-400/60 hover:text-glow-50"
+                className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-abyss-900/70 text-mist-200 transition-colors hover:border-neon-400/60 hover:text-glow-50"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
@@ -174,7 +177,7 @@ export const FileLightbox: React.FC<FileLightboxProps> = ({
                   e.stopPropagation();
                   onIndexChange(index + 1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-border bg-abyss-900/70 p-2 text-mist-200 transition-colors hover:border-neon-400/60 hover:text-glow-50"
+                className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-abyss-900/70 text-mist-200 transition-colors hover:border-neon-400/60 hover:text-glow-50"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>

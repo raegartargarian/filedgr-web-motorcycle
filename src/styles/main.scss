@@ -76,3 +76,19 @@
 .leaflet-control-attribution {
   display: none !important;
 }
+
+// File preview (@filedgr/web-core) theming.
+//
+// The library declares its --fdgr-* theme vars (white and light grey by
+// default) directly on `.fdgr-preview`, so they are set on that element itself
+// via <FilePreview className="fdgr-host" />. The double class (0,2,0) beats
+// the library's own `.fdgr-preview` rule regardless of order. Without this the
+// viewer's loading state flashed a light-grey panel inside the dark lightbox.
+.fdgr-preview.fdgr-host {
+  --fdgr-bg: hsl(var(--card));
+  --fdgr-fg: hsl(var(--foreground));
+  --fdgr-muted: hsl(var(--muted-foreground));
+  --fdgr-border: hsl(var(--border));
+  --fdgr-surface: hsl(var(--muted));
+  --fdgr-accent: hsl(var(--primary));
+}
