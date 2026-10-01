@@ -5,8 +5,15 @@
 # the repo .npmrc can authenticate the install. This site is the dev
 # deployment, so it builds in Vite's development mode: the VITE_* variables
 # (API, Web3Auth client id, explorer) come from the committed .env.development.
+#
+# The build fails unless the bundle talks to the dev API only, so a deploy can
+# never silently point at production.
 [build]
-  command = "npm run build:dev"
+  command = """
+    npm run build:dev && \
+    grep -rq 'https://webapp-api.dev.filedgr.network' build/assets && \
+    ! grep -rq 'https://webapp-api.filedgr.network' build/assets
+  """
   publish = "build"
 
 [build.environment]
