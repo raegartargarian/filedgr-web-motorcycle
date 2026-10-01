@@ -84,7 +84,7 @@ export const FileLightbox: React.FC<FileLightboxProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 flex flex-col bg-abyss-950/90 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex flex-col bg-abyss-950/95"
           onClick={onClose}
         >
           {/* Top bar */}
@@ -124,13 +124,11 @@ export const FileLightbox: React.FC<FileLightboxProps> = ({
 
           {/* Body */}
           <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 pb-4 sm:px-16">
-            {/* The card is not keyed by file, so switching files swaps only the
-                viewer inside it instead of tearing the card down and springing
-                it back in. */}
-            <motion.div
-              initial={{ scale: 0.96, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 26 }}
+            {/* A plain, always-opaque card: the overlay's fade carries open and
+                close. Animating the card's scale/opacity over a backdrop-blurred
+                overlay made Chrome drop it for a frame when the animation ended,
+                and it is not keyed by file, so a switch swaps only the viewer. */}
+            <div
               className={
                 isImage
                   ? "flex max-h-full max-w-5xl items-center justify-center"
@@ -154,7 +152,7 @@ export const FileLightbox: React.FC<FileLightboxProps> = ({
                   className="fdgr-host h-full"
                 />
               )}
-            </motion.div>
+            </div>
 
             {hasPrev && (
               <button
