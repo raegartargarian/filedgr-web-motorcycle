@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { useWalletAddress } from "@filedgr/web-core/auth";
 import { truncateAddress } from "@filedgr/web-core/format";
 import { useIsMobileOrTablet } from "@filedgr/web-core/react";
-import { LogOut, Menu, Wallet } from "lucide-react";
+import { LogOut, Mail, Menu, Wallet } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { appRoutes } from "../constants/routes";
 import { CopyableHash } from "./CopyableHash";
@@ -29,10 +29,40 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       : "text-mist-200 hover:text-glow-50",
   );
 
+/**
+ * The signed-in account: the login email when there is one, otherwise the
+ * wallet address (e.g. an external-wallet login carries no email).
+ */
+const Account = () => {
+  const { user } = useWeb3Auth() || {};
+  const walletAddress = useWalletAddress();
+  const email: string | undefined = user?.email;
+
+  if (email) {
+    return (
+      <span className="flex min-w-0 items-center gap-2" title={email}>
+        <Mail className="h-3.5 w-3.5 shrink-0 text-primary" />
+        <span className="truncate text-sm text-mist-200">{email}</span>
+      </span>
+    );
+  }
+  if (!walletAddress) return null;
+  return (
+    <span className="flex items-center gap-2">
+      <Wallet className="h-3.5 w-3.5 text-primary" />
+      <CopyableHash
+        value={walletAddress}
+        display={truncateAddress(walletAddress)}
+      />
+    </span>
+  );
+};
+
 export const Header = () => {
-  const { logout } = useWeb3Auth() || {};
+  const { user, logout } = useWeb3Auth() || {};
   const walletAddress = useWalletAddress();
   const isMobile = useIsMobileOrTablet();
+  const hasAccount = Boolean(user?.email || walletAddress);
 
   return (
     <header className="sticky top-0 z-50 h-16 border-b border-border/60 bg-abyss-900/70 backdrop-blur-md">
@@ -55,13 +85,9 @@ export const Header = () => {
         )}
 
         <div className="flex items-center gap-2">
-          {walletAddress && !isMobile && (
-            <span className="flex items-center gap-2 rounded-full border border-border bg-steel-800/80 py-1.5 pl-3 pr-2">
-              <Wallet className="h-3.5 w-3.5 text-primary" />
-              <CopyableHash
-                value={walletAddress}
-                display={truncateAddress(walletAddress)}
-              />
+          {hasAccount && !isMobile && (
+            <span className="flex max-w-64 items-center rounded-full border border-border bg-steel-800/80 py-1.5 pl-3 pr-3">
+              <Account />
             </span>
           )}
 
@@ -79,15 +105,11 @@ export const Header = () => {
                     <Link to={item.to}>{item.label}</Link>
                   </DropdownMenuItem>
                 ))}
-                {walletAddress && (
+                {hasAccount && (
                   <>
                     <DropdownMenuSeparator />
-                    <div className="flex items-center gap-2 px-2 py-1.5">
-                      <Wallet className="h-3.5 w-3.5 text-primary" />
-                      <CopyableHash
-                        value={walletAddress}
-                        display={truncateAddress(walletAddress)}
-                      />
+                    <div className="flex px-2 py-1.5">
+                      <Account />
                     </div>
                   </>
                 )}
