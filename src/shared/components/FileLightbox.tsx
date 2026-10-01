@@ -4,7 +4,6 @@ import {
   PreviewSource,
   SourceResolver,
 } from "@filedgr/web-core/preview";
-import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Download, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
@@ -76,114 +75,111 @@ export const FileLightbox: React.FC<FileLightboxProps> = ({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, index, hasPrev, hasNext, onClose, onIndexChange]);
 
+  if (!open || !source) return null;
+
+  // Fades in with CSS and closes instantly. A framer-motion exit fade snapped
+  // back to full opacity for one frame before unmounting (seen in a trace), so
+  // there is no exit animation to flash.
   return (
-    <AnimatePresence>
-      {open && source && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 flex flex-col bg-abyss-950/95"
-          onClick={onClose}
-        >
-          {/* Top bar */}
-          <div
-            className="flex items-center justify-between gap-3 px-4 py-3"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-glow-50">
-                {source.filename}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {index + 1} of {items.length}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              {url && (
-                <a
-                  href={url}
-                  download={source.filename}
-                  className="btn-ghost h-9 px-3 py-0 text-xs"
-                >
-                  <Download className="h-3.5 w-3.5" />
-                  Download
-                </a>
-              )}
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Close"
-                className="rounded-lg p-2 text-mist-200 transition-colors hover:bg-steel-700 hover:text-glow-50"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Body */}
-          <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 pb-4 sm:px-16">
-            {/* A plain, always-opaque card: the overlay's fade carries open and
-                close. Animating the card's scale/opacity over a backdrop-blurred
-                overlay made Chrome drop it for a frame when the animation ended,
-                and it is not keyed by file, so a switch swaps only the viewer. */}
-            <div
-              className={
-                isImage
-                  ? "flex max-h-full max-w-5xl items-center justify-center"
-                  : "flex h-full w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-border bg-steel-800"
-              }
-              onClick={(e) => e.stopPropagation()}
+    <div
+      className="fixed inset-0 z-50 flex flex-col bg-abyss-950/95 animate-in fade-in duration-200 motion-reduce:animate-none"
+      onClick={onClose}
+    >
+      {/* Top bar */}
+      <div
+        className="flex items-center justify-between gap-3 px-4 py-3"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium text-glow-50">
+            {source.filename}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {index + 1} of {items.length}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {url && (
+            <a
+              href={url}
+              download={source.filename}
+              className="btn-ghost h-9 px-3 py-0 text-xs"
             >
-              {isImage ? (
-                url && (
-                  <img
-                    src={url}
-                    alt={source.filename}
-                    className="max-h-[82vh] w-auto rounded-xl object-contain"
-                  />
-                )
-              ) : (
-                <FilePreview
-                  key={source.id}
-                  source={source}
-                  resolver={resolver}
-                  className="fdgr-host h-full"
-                />
-              )}
-            </div>
+              <Download className="h-3.5 w-3.5" />
+              Download
+            </a>
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="rounded-lg p-2 text-mist-200 transition-colors hover:bg-steel-700 hover:text-glow-50"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
 
-            {hasPrev && (
-              <button
-                type="button"
-                aria-label="Previous file"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onIndexChange(index - 1);
-                }}
-                className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-abyss-900/70 text-mist-200 transition-colors hover:border-neon-400/60 hover:text-glow-50"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-            )}
-            {hasNext && (
-              <button
-                type="button"
-                aria-label="Next file"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onIndexChange(index + 1);
-                }}
-                className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-abyss-900/70 text-mist-200 transition-colors hover:border-neon-400/60 hover:text-glow-50"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            )}
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+      {/* Body */}
+      <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 pb-4 sm:px-16">
+        {/* A plain, always-opaque card with no animation of its own: animating
+            its scale/opacity over the overlay made Chrome drop it for a frame
+            when the animation ended. Not keyed by file, so a switch swaps only
+            the viewer inside it. */}
+        <div
+          className={
+            isImage
+              ? "flex max-h-full max-w-5xl items-center justify-center"
+              : "flex h-full w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-border bg-steel-800"
+          }
+          onClick={(e) => e.stopPropagation()}
+        >
+          {isImage ? (
+            url && (
+              <img
+                src={url}
+                alt={source.filename}
+                className="max-h-[82vh] w-auto rounded-xl object-contain"
+              />
+            )
+          ) : (
+            <FilePreview
+              key={source.id}
+              source={source}
+              resolver={resolver}
+              className="fdgr-host h-full"
+            />
+          )}
+        </div>
+
+        {hasPrev && (
+          <button
+            type="button"
+            aria-label="Previous file"
+            onClick={(e) => {
+              e.stopPropagation();
+              onIndexChange(index - 1);
+            }}
+            className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-abyss-900/70 text-mist-200 transition-colors hover:border-neon-400/60 hover:text-glow-50"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+        )}
+        {hasNext && (
+          <button
+            type="button"
+            aria-label="Next file"
+            onClick={(e) => {
+              e.stopPropagation();
+              onIndexChange(index + 1);
+            }}
+            className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-abyss-900/70 text-mist-200 transition-colors hover:border-neon-400/60 hover:text-glow-50"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        )}
+      </div>
+    </div>
   );
 };
 
