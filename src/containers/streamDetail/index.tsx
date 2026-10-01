@@ -1,8 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { CopyableHash } from "@/shared/components/CopyableHash";
 import { LoadingIndicator } from "@/shared/components/LoadingIndicator";
+import {
+  CompactCoverSkeleton,
+  RecordRowsSkeleton,
+} from "@/shared/components/PageSkeletons";
 import { RecordTimeline } from "@/shared/components/RecordTimeline";
 import { VaultCover } from "@/shared/components/VaultCover";
 import { appRoutes } from "@/shared/constants/routes";
@@ -162,7 +165,7 @@ const StreamDetail = () => {
 
   return (
     <div className="min-h-screen">
-      {vault && (
+      {vault ? (
         <VaultCover
           vault={vault}
           size="compact"
@@ -256,15 +259,13 @@ const StreamDetail = () => {
             </div>
           )}
         </VaultCover>
+      ) : (
+        <CompactCoverSkeleton />
       )}
 
       <div className="container mx-auto max-w-5xl px-4 py-8 md:py-10">
         {isFirstLoad ? (
-          <div className="space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-16 w-full rounded-lg" />
-            ))}
-          </div>
+          <RecordRowsSkeleton />
         ) : attachments.length === 0 ? (
           <div className="u-card p-12 text-center">
             <Layers className="mx-auto mb-3 h-10 w-10 text-steel-500" />
