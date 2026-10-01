@@ -1,5 +1,5 @@
 import { CopyableHash } from "@/shared/components/CopyableHash";
-import { FileCard } from "@/shared/components/FileCard";
+import { FILE_CARD_GRID, FileCard } from "@/shared/components/FileCard";
 import { FileLightbox } from "@/shared/components/FileLightbox";
 import { Attachment, AttachmentFileModel } from "@/shared/types/attachment";
 import { createIpfsResolver } from "@/shared/utils/previewResolver";
@@ -63,7 +63,7 @@ const FileViewer: React.FC<FileViewerProps> = ({ attachment }) => {
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        className={FILE_CARD_GRID}
       >
         {sources.map((source, index) => (
           <motion.div key={source.id} variants={staggerItem}>
