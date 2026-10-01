@@ -1,8 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { BikeLoader } from "@/shared/components/BikeLoader";
 import { CopyableHash } from "@/shared/components/CopyableHash";
-import { LoadingIndicator } from "@/shared/components/LoadingIndicator";
+import {
+  CompactCoverSkeleton,
+  RecordRowsSkeleton,
+} from "@/shared/components/PageSkeletons";
 import { RecordTimeline } from "@/shared/components/RecordTimeline";
 import { VaultCover } from "@/shared/components/VaultCover";
 import { appRoutes } from "@/shared/constants/routes";
@@ -16,6 +19,7 @@ import { viewTXInExplorer } from "@/shared/utils/viewVaultInExplorer";
 import { formatDate } from "@filedgr/web-core/format";
 import { useInfiniteScroll } from "@filedgr/web-core/react";
 import {
+  AlertTriangle,
   Archive,
   Calendar,
   ExternalLink,
@@ -53,6 +57,7 @@ const StreamDetail = () => {
   const [totalPages, setTotalPages] = useState<number | null>(null);
   const [totalRecords, setTotalRecords] = useState<number | null>(null);
   const [isFetching, setIsFetching] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   // Archived records are out of the list by default. Asking for them adds
   // them to the list — the backend has no archived-only view — and every fetch
@@ -76,6 +81,7 @@ const StreamDetail = () => {
     setPage(0);
     setTotalPages(null);
     setTotalRecords(null);
+    setLoadFailed(false);
     setIsFetching(true);
     getStreamAttachments(code, 1, PAGE_SIZE, archivedFilter)
       .then((res) => {
@@ -87,7 +93,9 @@ const StreamDetail = () => {
         setTotalRecords(first.total_records);
       })
       .catch((error) => {
-        if (!cancelled) console.error("Failed to load attachments:", error);
+        if (cancelled) return;
+        console.error("Failed to load attachments:", error);
+        setLoadFailed(true);
       })
       .finally(() => {
         if (!cancelled) setIsFetching(false);
@@ -153,7 +161,9 @@ const StreamDetail = () => {
   // toggle does not vanish from under the cursor.
   const offerArchived = (archivedCount ?? 0) > 0 || showArchived;
 
-  const isFirstLoad = isFetching && attachments.length === 0;
+  // The first page has not come back yet (including the render before the
+  // fetch starts, so the empty state never flashes).
+  const isFirstLoad = totalPages === null && !loadFailed;
   const status = stream?.status
     ? getStatusConfig("stream", stream.status)
     : null;
@@ -162,7 +172,7 @@ const StreamDetail = () => {
 
   return (
     <div className="min-h-screen">
-      {vault && (
+      {vault && vault.id === id ? (
         <VaultCover
           vault={vault}
           size="compact"
@@ -256,14 +266,20 @@ const StreamDetail = () => {
             </div>
           )}
         </VaultCover>
+      ) : (
+        <CompactCoverSkeleton />
       )}
 
       <div className="container mx-auto max-w-5xl px-4 py-8 md:py-10">
         {isFirstLoad ? (
-          <div className="space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-16 w-full rounded-lg" />
-            ))}
+          <RecordRowsSkeleton />
+        ) : loadFailed ? (
+          <div className="u-card p-12 text-center">
+            <AlertTriangle className="mx-auto mb-3 h-10 w-10 text-steel-500" />
+            <h3 className="mb-1 text-base">Couldn't load service records</h3>
+            <p className="text-sm text-muted-foreground">
+              Something went wrong while loading this stream. Please try again.
+            </p>
           </div>
         ) : attachments.length === 0 ? (
           <div className="u-card p-12 text-center">
@@ -284,7 +300,7 @@ const StreamDetail = () => {
             )}
             {isFetching && attachments.length > 0 && (
               <div className="mt-6 flex w-full items-center justify-center">
-                <LoadingIndicator />
+                <BikeLoader />
               </div>
             )}
           </>

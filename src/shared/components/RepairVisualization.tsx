@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileCard } from "@/shared/components/FileCard";
+import { FILE_CARD_GRID, FileCard } from "@/shared/components/FileCard";
 import { FileLightbox } from "@/shared/components/FileLightbox";
 import { StatTile } from "@/shared/components/StatTile";
 import { blobUrlResolver } from "@/shared/utils/previewResolver";
@@ -395,7 +395,7 @@ const RepairVisualization: React.FC<RepairVisualizationProps> = ({ data }) => {
               variants={staggerContainer}
               initial="initial"
               animate="animate"
-              className="grid grid-cols-2 gap-4 md:grid-cols-3"
+              className={FILE_CARD_GRID}
             >
               {docSources.map((source, index) => (
                 <motion.div key={source.id} variants={staggerItem}>

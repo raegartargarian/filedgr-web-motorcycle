@@ -11,6 +11,7 @@ import {
   Shield,
   Wrench,
 } from "lucide-react";
+import type { MouseEvent } from "react";
 import { Link } from "react-router-dom";
 
 const fadeInUp = {
@@ -70,6 +71,22 @@ const INCLUDED = [
   },
 ];
 
+const HOW_IT_WORKS_ID = "how-it-works";
+
+/**
+ * In-page link to the "How it works" section. The app uses a HashRouter, so a
+ * plain `#how-it-works` href would be read as a route; scroll to it instead.
+ */
+const scrollToHowItWorks = (event: MouseEvent) => {
+  event.preventDefault();
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  document
+    .getElementById(HOW_IT_WORKS_ID)
+    ?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+};
+
 const Dashboard = () => {
   return (
     <div>
@@ -84,14 +101,19 @@ const Dashboard = () => {
               View your motorcycles
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <a href="#how-it-works" className="btn-ghost">
+            <button
+              type="button"
+              onClick={scrollToHowItWorks}
+              className="btn-ghost"
+            >
               How it works
-            </a>
+            </button>
           </>
         }
       >
-        <motion.a
-          href="#how-it-works"
+        <motion.button
+          type="button"
+          onClick={scrollToHowItWorks}
           aria-label="Scroll to how it works"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -99,11 +121,11 @@ const Dashboard = () => {
           className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-muted-foreground transition-colors hover:text-primary"
         >
           <ChevronDown className="h-5 w-5 animate-bounce" />
-        </motion.a>
+        </motion.button>
       </HeroIntro>
 
       {/* How it works */}
-      <section id="how-it-works" className="scroll-mt-16 py-20 md:py-28">
+      <section id={HOW_IT_WORKS_ID} className="scroll-mt-16 py-20 md:py-28">
         <div className="container mx-auto max-w-5xl px-4">
           <motion.div {...fadeInUp} className="mb-12 text-center">
             <span className="u-eyebrow">How it works</span>

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { BikeLoader } from "@/shared/components/BikeLoader";
 import NoActivity from "@/shared/components/EmptyData";
-import { LoadingIndicator } from "@/shared/components/LoadingIndicator";
+import { VaultCardsSkeleton } from "@/shared/components/PageSkeletons";
 import { useInfiniteScroll } from "@filedgr/web-core/react";
 import { AlertTriangle, Bike } from "lucide-react";
 import { useEffect } from "react";
@@ -33,11 +33,30 @@ const Vaults = () => {
       dispatch(vaultsActions.fetchVaultsStart({ page: currentPage + 1 })),
   });
 
-  if (!isFirstLoading && vaults.length === 0) {
-    return (
-      <div className="min-h-screen">
-        <div className="max-w-5xl mx-auto py-8 px-4">
-          <div className="flex flex-col justify-center items-center mt-16">
+  const isEmpty = !isFirstLoading && vaults.length === 0;
+
+  return (
+    <div className="min-h-screen">
+      <div className="container mx-auto max-w-6xl px-4 py-10">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <span className="u-eyebrow">Your garage</span>
+            <h1 className="u-display mt-2 text-4xl md:text-5xl">
+              Your motorcycles
+            </h1>
+          </div>
+          {!isFirstLoading && !isEmpty && (
+            <span className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Bike className="h-4 w-4 text-primary" />
+              {vaults.length} registered
+            </span>
+          )}
+        </div>
+
+        {isFirstLoading ? (
+          <VaultCardsSkeleton />
+        ) : isEmpty ? (
+          <div className="mt-16 flex flex-col items-center justify-center">
             {error ? (
               <>
                 <NoActivity
@@ -61,38 +80,6 @@ const Vaults = () => {
               />
             )}
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen">
-      <div className="container mx-auto max-w-6xl px-4 py-10">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <span className="u-eyebrow">Your garage</span>
-            <h1 className="u-display mt-2 text-4xl md:text-5xl">
-              Your motorcycles
-            </h1>
-          </div>
-          {!isFirstLoading && (
-            <span className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Bike className="h-4 w-4 text-primary" />
-              {vaults.length} registered
-            </span>
-          )}
-        </div>
-
-        {isFirstLoading ? (
-          <div className="grid gap-6 md:grid-cols-2">
-            {Array.from({ length: 2 }).map((_, index) => (
-              <Skeleton
-                className="h-[44svh] min-h-[340px] w-full rounded-2xl"
-                key={index}
-              />
-            ))}
-          </div>
         ) : (
           <>
             <div className="grid gap-6 md:grid-cols-2">
@@ -100,12 +87,12 @@ const Vaults = () => {
                 <VaultItem key={vault.id} vault={vault} />
               ))}
             </div>
-            {hasMore && vaults.length > 0 && (
+            {hasMore && (
               <div ref={sentinelRef} aria-hidden className="h-px w-full" />
             )}
             {isFetching && (
               <div className="mt-8 flex w-full items-center justify-center">
-                <LoadingIndicator />
+                <BikeLoader />
               </div>
             )}
           </>

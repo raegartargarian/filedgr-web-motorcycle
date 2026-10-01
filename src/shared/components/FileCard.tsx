@@ -23,6 +23,13 @@ const iconFor = (category: string) =>
   category === "image" ? ImageIcon : category === "pdf" ? FileText : File;
 
 /**
+ * Grid for FileCards. web-core renders thumbnails 280px wide, so the columns
+ * stay narrow enough (about 220px at most) that the image is not blown up.
+ */
+export const FILE_CARD_GRID =
+  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5";
+
+/**
  * A file tile: web-core's cached thumbnail on top, name and size below.
  * Click opens the caller's lightbox.
  */
@@ -46,7 +53,7 @@ export const FileCard: React.FC<FileCardProps> = ({
         className,
       )}
     >
-      <div className="relative h-44 w-full overflow-hidden bg-abyss-900/60">
+      <div className="relative h-36 w-full overflow-hidden bg-abyss-900/60">
         <FileThumbnail
           source={source}
           resolver={resolver}

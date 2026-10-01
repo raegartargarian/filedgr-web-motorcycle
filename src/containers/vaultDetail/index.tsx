@@ -1,7 +1,11 @@
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { CopyableHash } from "@/shared/components/CopyableHash";
+import NoActivity from "@/shared/components/EmptyData";
+import {
+  RecordRowsSkeleton,
+  VaultDetailSkeleton,
+} from "@/shared/components/PageSkeletons";
 import { RecordTimeline } from "@/shared/components/RecordTimeline";
 import { StatTile } from "@/shared/components/StatTile";
 import { VaultCover } from "@/shared/components/VaultCover";
@@ -12,6 +16,7 @@ import { formatStreamName } from "@/shared/utils/streamHelpers";
 import { viewTXInExplorer } from "@/shared/utils/viewVaultInExplorer";
 import { formatDate, formatRelativeTime } from "@filedgr/web-core/format";
 import {
+  AlertTriangle,
   ArrowRight,
   Calendar,
   Download,
@@ -35,6 +40,7 @@ const VaultDetail = () => {
   const dispatch = useDispatch();
   const vault = useSelector(vaultDetailSelectors.vault);
   const isLoading = useSelector(vaultDetailSelectors.isLoading);
+  const error = useSelector(vaultDetailSelectors.error);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [streamFilter, setStreamFilter] = useState<string | null>(null);
 
@@ -68,23 +74,20 @@ const VaultDetail = () => {
     }
   };
 
-  if (isLoading || !vault) {
+  if (error) {
     return (
-      <div className="min-h-screen">
-        <Skeleton className="h-[52svh] min-h-[440px] w-full rounded-none" />
-        <div className="container mx-auto max-w-5xl px-4 py-8">
-          <div className="mb-8 grid gap-4 sm:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-[74px] rounded-xl" />
-            ))}
-          </div>
-          <Skeleton className="mb-3 h-16 w-full rounded-lg" />
-          <Skeleton className="mb-3 h-16 w-full rounded-lg" />
-          <Skeleton className="h-16 w-full rounded-lg" />
-        </div>
+      <div className="flex min-h-screen justify-center px-4 pt-24">
+        <NoActivity
+          icon={AlertTriangle}
+          title="Couldn't Load Motorcycle"
+          description="Something went wrong while loading this motorcycle. Please try again."
+        />
       </div>
     );
   }
+  // Until this vault has loaded: covers the first render and a vault left
+  // over from the previous page.
+  if (isLoading || !vault || vault.id !== id) return <VaultDetailSkeleton />;
 
   const streams = vault.streams ?? [];
   const vaultStatus = vault.status
@@ -258,11 +261,7 @@ const VaultDetail = () => {
         )}
 
         {recordsLoading ? (
-          <div className="space-y-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-16 w-full rounded-lg" />
-            ))}
-          </div>
+          <RecordRowsSkeleton count={3} />
         ) : visible.length > 0 ? (
           <RecordTimeline records={visible} showStream={!streamFilter} />
         ) : (
