@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import NoActivity from "@/shared/components/EmptyData";
+import { VaultCardsSkeleton } from "@/shared/components/PageSkeletons";
 import { LoadingIndicator } from "@/shared/components/LoadingIndicator";
 import { useInfiniteScroll } from "@filedgr/web-core/react";
 import { AlertTriangle, Bike } from "lucide-react";
@@ -85,14 +85,7 @@ const Vaults = () => {
         </div>
 
         {isFirstLoading ? (
-          <div className="grid gap-6 md:grid-cols-2">
-            {Array.from({ length: 2 }).map((_, index) => (
-              <Skeleton
-                className="h-[44svh] min-h-[340px] w-full rounded-2xl"
-                key={index}
-              />
-            ))}
-          </div>
+          <VaultCardsSkeleton />
         ) : (
           <>
             <div className="grid gap-6 md:grid-cols-2">

@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ServiceRecordSkeleton } from "@/shared/components/PageSkeletons";
 import { CopyableHash } from "@/shared/components/CopyableHash";
 import RepairVisualization from "@/shared/components/RepairVisualization";
 import { cleanupRepairData } from "@/shared/utils/zipHandler";
@@ -70,22 +70,7 @@ const ServiceRecord = () => {
     };
   }, [dispatch, attachmentId]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen">
-        <div className="max-w-6xl mx-auto py-8 px-4">
-          <Skeleton className="h-8 w-48 mb-8 bg-steel-700" />
-          <Skeleton className="h-32 w-full mb-6 bg-steel-700 rounded-xl" />
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-24 bg-steel-700 rounded-xl" />
-            ))}
-          </div>
-          <Skeleton className="h-96 w-full bg-steel-700 rounded-xl" />
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <ServiceRecordSkeleton />;
 
   if (error) {
     return (
