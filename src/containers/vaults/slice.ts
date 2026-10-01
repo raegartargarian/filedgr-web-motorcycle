@@ -6,7 +6,9 @@ const initialState: VaultsState = {
   vaults: [],
   currentPage: 0,
   totalPages: null,
-  isFirstLoading: false,
+  // The list page fetches on mount, so it starts out loading rather than
+  // flashing the empty state for a frame.
+  isFirstLoading: true,
   isFetching: false,
   error: null,
   hasMore: true,
@@ -31,7 +33,7 @@ const vaultsSlice = createSlice({
         currentPage: number;
         totalPages: number;
         hasMore: boolean;
-      }>
+      }>,
     ) {
       state.isFetching = false;
       state.isFirstLoading = false;

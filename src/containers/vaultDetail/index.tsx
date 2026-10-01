@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { CopyableHash } from "@/shared/components/CopyableHash";
+import NoActivity from "@/shared/components/EmptyData";
 import {
   RecordRowsSkeleton,
   VaultDetailSkeleton,
@@ -15,6 +16,7 @@ import { formatStreamName } from "@/shared/utils/streamHelpers";
 import { viewTXInExplorer } from "@/shared/utils/viewVaultInExplorer";
 import { formatDate, formatRelativeTime } from "@filedgr/web-core/format";
 import {
+  AlertTriangle,
   ArrowRight,
   Calendar,
   Download,
@@ -38,6 +40,7 @@ const VaultDetail = () => {
   const dispatch = useDispatch();
   const vault = useSelector(vaultDetailSelectors.vault);
   const isLoading = useSelector(vaultDetailSelectors.isLoading);
+  const error = useSelector(vaultDetailSelectors.error);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [streamFilter, setStreamFilter] = useState<string | null>(null);
 
@@ -71,7 +74,20 @@ const VaultDetail = () => {
     }
   };
 
-  if (isLoading || !vault) return <VaultDetailSkeleton />;
+  if (error) {
+    return (
+      <div className="flex min-h-screen justify-center px-4 pt-24">
+        <NoActivity
+          icon={AlertTriangle}
+          title="Couldn't Load Motorcycle"
+          description="Something went wrong while loading this motorcycle. Please try again."
+        />
+      </div>
+    );
+  }
+  // Until this vault has loaded: covers the first render and a vault left
+  // over from the previous page.
+  if (isLoading || !vault || vault.id !== id) return <VaultDetailSkeleton />;
 
   const streams = vault.streams ?? [];
   const vaultStatus = vault.status

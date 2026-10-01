@@ -62,6 +62,21 @@ module.exports = {
         relaxed: "1.75",
         loose: "2",
       },
+      keyframes: {
+        // BikeLoader: the bike bobs on its suspension over a passing road.
+        "bike-bob": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-2px)" },
+        },
+        "road-pass": {
+          from: { backgroundPosition: "0 0" },
+          to: { backgroundPosition: "-24px 0" },
+        },
+      },
+      animation: {
+        "bike-bob": "bike-bob 0.4s ease-in-out infinite",
+        "road-pass": "road-pass 0.5s linear infinite",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

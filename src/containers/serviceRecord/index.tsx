@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ServiceRecordSkeleton } from "@/shared/components/PageSkeletons";
+import { BikeLoader } from "@/shared/components/BikeLoader";
 import { CopyableHash } from "@/shared/components/CopyableHash";
 import RepairVisualization from "@/shared/components/RepairVisualization";
 import { cleanupRepairData } from "@/shared/utils/zipHandler";
@@ -23,7 +24,6 @@ import {
   ExternalLink,
   FileText,
   HardDrive,
-  Loader2,
   ShieldCheck,
 } from "lucide-react";
 import { useEffect } from "react";
@@ -70,7 +70,11 @@ const ServiceRecord = () => {
     };
   }, [dispatch, attachmentId]);
 
-  if (isLoading) return <ServiceRecordSkeleton />;
+  // Until this record has loaded: covers the first render (before the fetch
+  // starts) and a record left over from the previous page.
+  if (isLoading || (!error && attachment?.id !== attachmentId)) {
+    return <ServiceRecordSkeleton />;
+  }
 
   if (error) {
     return (
@@ -231,9 +235,12 @@ const ServiceRecord = () => {
 
         {/* Processing state */}
         {isProcessingZip && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
-            <p className="text-mist-200 font-medium">
+          <div
+            className="flex flex-col items-center justify-center py-20"
+            role="status"
+          >
+            <BikeLoader />
+            <p className="mt-5 text-mist-200 font-medium">
               Processing service record...
             </p>
             <p className="text-sm text-muted-foreground mt-1">
