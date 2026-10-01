@@ -6,6 +6,7 @@ import { VaultsPage } from "./containers/vaults/loadable";
 import { DashboardPage } from "./containers/dashboard/loadable";
 import { ServiceRecordPage } from "./containers/serviceRecord/loadable";
 import AuthModal from "./shared/components/AuthModal";
+import LandOnVaultsAfterSignIn from "./shared/components/LandOnVaultsAfterSignIn";
 import PageLayout from "./shared/components/PageLayOut";
 import ScrollToTop from "./shared/components/ScrollToTop";
 import { appRoutes } from "./shared/constants/routes";
@@ -19,6 +20,8 @@ function App() {
       <AuthModal />
 
       <ScrollToTop />
+
+      <LandOnVaultsAfterSignIn />
 
       <Routes>
         {/* Routes with Header and Footer */}
